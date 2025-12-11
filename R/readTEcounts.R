@@ -1,14 +1,7 @@
 #' Read TE count data and merge in a data frame by sample
 #'
-#' @param datafile A tab separated file with four columns and a header. Structure 
-#' must follow this example:
-#' 
-#' File         Sample	Group	 Condition
-#' WT1.cntTable	WT1	    WT	   Control
-#' ....
-#' KO1.cntTable	KO1	    KO	   Treat
-#' 
-#' "Control" and "Treat" labels are required for DESeq2 analysis.
+#' @param metadata Data frame with sample information, previously read with
+#'        function read_metadata.
 #' @param folder Folder for count files listed in first column
 #'
 #' @returns Data frame with counts by features in rows and samples in columns
@@ -16,29 +9,11 @@
 #'
 #' @examples 
 #' datafile <- "my.path/data.csv"
+#' metadata <- read_metadata(datafile)
 #' folder <- "data/"
-#' df <- readTEexpress(datafile, folder)
+#' df <- readTEexpress(metadata, folder)
 
-readTEcounts <- function(datafile, folder) {
-  
-  # Define expected columns
-  expected_cols <- c("File", "Sample", "Group", "Condition")
-  
-  # Read and validate metadata file
-  if (!file.exists(datafile)) {
-    stop("File '", datafile, "' not found.")
-  }
-  
-  metadata <- read.table(datafile, sep = "\t", header = TRUE, 
-                         check.names = FALSE, stringsAsFactors = FALSE)
-  
-  # Validate structure
-  if (ncol(metadata) != length(expected_cols)) {
-    stop("File '", datafile, "' should have ", length(expected_cols), 
-         " columns, but has ", ncol(metadata), ".")
-  }
-  
-  colnames(metadata) <- expected_cols
+readTEcounts <- function(metadata, folder) {
   
   # Construct file paths
   file_paths <- file.path(folder, metadata$File)

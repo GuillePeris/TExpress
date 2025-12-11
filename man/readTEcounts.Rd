@@ -4,18 +4,11 @@
 \alias{readTEcounts}
 \title{Read TE count data and merge in a data frame by sample}
 \usage{
-readTEcounts(datafile, folder)
+readTEcounts(metadata, folder)
 }
 \arguments{
-\item{datafile}{A tab separated file with four columns and a header. Structure
-must follow this example:
-
-File         Sample    Group     Condition
-WT1.cntTable    WT1        WT       Control
-....
-KO1.cntTable    KO1        KO       Treat
-
-"Control" and "Treat" labels are required for DESeq2 analysis.}
+\item{metadata}{Data frame with sample information, previously read with
+function read_metadata.}
 
 \item{folder}{Folder for count files listed in first column}
 }
@@ -27,6 +20,7 @@ Read TE count data and merge in a data frame by sample
 }
 \examples{
 datafile <- "my.path/data.csv"
+metadata <- read_metadata(datafile)
 folder <- "data/"
-df <- readTEexpress(datafile, folder)
+df <- readTEexpress(metadata, folder)
 }
