@@ -1,7 +1,7 @@
 #' @import stringr
 #' @import DESeq2
 #' @import dplyr
-#' Performs differential analysis expression using DESeq2
+#' @title Performs differential analysis expression using DESeq2
 #'
 #' @param countData Data frame with matrix counts obtained from readTEcounts
 #' @param metadata  Metadata read with read_metadata
@@ -10,7 +10,6 @@
 #' @returns DESeq2 dds object
 #' @export
 #'
-#' @examples
 call_deseq2 <- function(countData, metadata, useCtrlGenes=FALSE) {
   
   # Check correct factors in Condition.

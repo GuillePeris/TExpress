@@ -1,4 +1,4 @@
-#' Title Reads metadata file with sample information
+#' @title Reads metadata file with sample information
 #'
 #' @param datafile A tab separated file with four columns and a header. Structure 
 #' must follow this example:

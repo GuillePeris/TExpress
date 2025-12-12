@@ -1,4 +1,4 @@
-#' Read TE count data and merge in a data frame by sample
+#' @title Read TE count data and merge in a data frame by sample
 #'
 #' @param metadata Data frame with sample information, previously read with
 #'        function read_metadata.

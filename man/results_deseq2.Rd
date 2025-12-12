@@ -2,12 +2,12 @@
 % Please edit documentation in R/results_deseq2.R
 \name{results_deseq2}
 \alias{results_deseq2}
-\title{Title}
+\title{Get results after DESeq2 analysis}
 \usage{
 results_deseq2(dds, shrinklog2FC = FALSE)
 }
 \arguments{
-\item{dds}{Objecto from call_deseq2 function}
+\item{dds}{Object from call_deseq2 function}
 
 \item{shrinklog2FC}{Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)}
 }
@@ -15,5 +15,5 @@ results_deseq2(dds, shrinklog2FC = FALSE)
 Data frame with DESeq2 results
 }
 \description{
-Title
+Get results after DESeq2 analysis
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_metadata.R
 \name{read_metadata}
 \alias{read_metadata}
-\title{Title Reads metadata file with sample information}
+\title{Reads metadata file with sample information}
 \usage{
 read_metadata(datafile)
 }
@@ -21,7 +21,7 @@ KO1.cntTable    KO1        KO       Treat
 Data frame with metadata
 }
 \description{
-Title Reads metadata file with sample information
+Reads metadata file with sample information
 }
 \examples{
 datafile <- "my.path/data.csv"
