@@ -1,15 +1,20 @@
+#' @import stringr
 #' @title Compute differential expression analysis for transposable elements 
 #'
-#' @param metafile 
-#' @param folder 
-#' @param useCtrlGenes 
-#' @param shrinklog2FC 
+#' @param metafile Full path of metadata file
+#' @param folder Full path for folder of count files
+#' @param output Path for output folder
+#' @param useCtrlGenes Boolean for using only genes in estimating DESeq2 size factors (default: FALSE)
+#' @param shrinklog2FC Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)
 #'
 #' @returns Table of results
 #' @export
 #'
-TE_DEA <- function(metafile, folder, useCtrlGenes=FALSE, 
-                         shrinklog2FC=FALSE) {
+TE_DEA <- function(metafile, 
+                   folder,
+                   output=".",
+                   useCtrlGenes=FALSE, 
+                   shrinklog2FC=FALSE) {
   
   # Read metadata
   message("Reading metadata file.")
@@ -27,5 +32,16 @@ TE_DEA <- function(metafile, folder, useCtrlGenes=FALSE,
   # Save normalized counts
   norm.counts <- norm_counts(dds)
   
-  res
+  # Divide counts in genes and TEs and save
+  gene.count <- norm.counts[!stringr::str_detect(rownames(norm.counts), ":"), ]
+  output.gene<-paste0(output, "/",  "gene_normalizedCounts.csv")
+  write.table(gene.count, file=output.gene, sep="\t")
+  
+  TE.count <- norm.counts[stringr::str_detect(rownames(norm.counts), ":"), ]
+  output.TE<-paste0(output, "/",  "TE_normalizedCounts.csv")
+  write.table(TE.count, file=output.TE, sep="\t")
+  
+  
+  # This is a procedure not returning anything
+  invisible()
 }

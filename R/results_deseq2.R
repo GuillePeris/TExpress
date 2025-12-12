@@ -2,12 +2,12 @@
 #' @title Get results after DESeq2 analysis
 #'
 #' @param dds Object from call_deseq2 function
-#' @param shrinklog2FC Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)
+#' @param shrinklog2FC Boolean for applying log2FC shrinking in DESEq2
 #'
 #' @returns Data frame with DESeq2 results
 #' @export
 #'
-results_deseq2 <- function(dds, shrinklog2FC=FALSE) {
+results_deseq2 <- function(dds, shrinklog2FC) {
   
   # Shrink log2FC if requires
   if(shrinklog2FC) {

@@ -5,12 +5,12 @@
 #'
 #' @param countData Data frame with matrix counts obtained from readTEcounts
 #' @param metadata  Metadata read with read_metadata
-#' @param useCtrlGenes Boolean for using only genes in estimating DESeq2 size factors (default: FALSE)
+#' @param useCtrlGenes Boolean for using only genes in estimating DESeq2 size factors
 #'
 #' @returns DESeq2 dds object
 #' @export
 #'
-call_deseq2 <- function(countData, metadata, useCtrlGenes=FALSE) {
+call_deseq2 <- function(countData, metadata, useCtrlGenes) {
   
   # Check correct factors in Condition.
   expected_levels <- c("Control", "Treat")
