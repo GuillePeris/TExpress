@@ -1,3 +1,5 @@
+#' @import data.table
+#' @import tibble
 #' @title Read TE count data and merge in a data frame by sample
 #'
 #' @param metadata Data frame with sample information, previously read with
@@ -26,8 +28,8 @@ readTEcounts <- function(metadata, folder) {
   
   # Read all count files into a list
   count_list <- lapply(seq_along(file_paths), function(i) {
-    counts <- read.table(file_paths[i], sep = "\t", header = TRUE, 
-                         check.names = FALSE, row.names = 1)
+    counts <- data.table::fread(file_paths[i], sep = "\t", header = TRUE) %>% 
+               tibble::column_to_rownames(names(.)[1])
     colnames(counts) <- metadata$Sample[i]
     counts
   })

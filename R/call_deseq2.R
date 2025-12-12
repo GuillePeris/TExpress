@@ -14,7 +14,7 @@ call_deseq2 <- function(countData, metadata, useCtrlGenes=FALSE) {
   
   # Check correct factors in Condition.
   expected_levels <- c("Control", "Treat")
-  if (!metadata$Condition %in% expected_levels) {
+  if (any(!metadata$Condition %in% expected_levels)) {
     stop(paste0("Metadata file 'Condition' columns has values ",
                 "different to 'Control' and 'Treat'"))
   }
@@ -24,7 +24,7 @@ call_deseq2 <- function(countData, metadata, useCtrlGenes=FALSE) {
            dplyr::mutate(condition = factor(Condition, levels = expected_levels))
   
   # DESeq2 analysis
-  dds <- DESeq2::DESeqDataSetFromMatrix(countData = count.df,
+  dds <- DESeq2::DESeqDataSetFromMatrix(countData = countData,
                                 colData = colData,
                                 design = ~ condition)
   

@@ -18,9 +18,10 @@ results_deseq2 <- function(dds, shrinklog2FC=FALSE) {
     res <- DESeq2::results(dds)
   } 
   
+  res <- as.data.frame(res)
+  
   # Remove NA rows and sort by padj
   res_complete <- res[complete.cases(res), ]
   res_sorted <- res_complete[order(res_complete$padj), ]
-  
-  as.data.frame(res)
+  res_sorted
 }
