@@ -6,13 +6,12 @@
 #' @param countData Data frame with matrix counts obtained from readTEcounts
 #' @param metadata  Metadata read with read_metadata
 #' @param useCtrlGenes Boolean for using only genes in estimating DESeq2 size factors (default: FALSE)
-#' @param shrinklog2FC Boolean for applying log2FC shrinking in DESEq2 (default: FALSE)
 #'
-#' @returns Data frame with DESeq2 results
+#' @returns DESeq2 dds object
 #' @export
 #'
 #' @examples
-call_deseq2 <- function(countData, metadata, useCtrlGenes=FALSE, shrinklog2FC=FALSE) {
+call_deseq2 <- function(countData, metadata, useCtrlGenes=FALSE) {
   
   # Check correct factors in Condition.
   expected_levels <- c("Control", "Treat")
@@ -39,19 +38,5 @@ call_deseq2 <- function(countData, metadata, useCtrlGenes=FALSE, shrinklog2FC=FA
   
   # DESeq2 analysis
   dds <- DESeq2::DESeq(dds)
-  
-  # Shrink log2FC if requires
-  if(shrinklog2FC) {
-    res <- DESeq2::lfcShrink(dds, coef=paste0("condition_", expected_levels[2], 
-                                      "_vs_", expected_levels[1]),  
-                     type="apeglm")
-  } else {
-    res <- DESeq2::results(dds)
-  } 
-  
-  # Remove NA rows and sort by padj
-  res_complete <- res[complete.cases(res), ]
-  res_sorted <- res_complete[order(res_complete$padj), ]
-  
-  as.data.frame(res)
+  dds
 }
