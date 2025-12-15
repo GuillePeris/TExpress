@@ -1,4 +1,3 @@
-#' @import data.table
 #' @import tibble
 #' @title Read TE count data and merge in a data frame by sample
 #'
@@ -52,5 +51,5 @@ readTEcounts <- function(metadata, folder) {
     }
   }
   
-  return(count_df)
+ count_df
 }

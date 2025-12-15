@@ -8,6 +8,9 @@ TE_DEA(
   metafile,
   folder,
   output = ".",
+  maxpadj = 0.05,
+  minlfc = 1,
+  device = "png",
   useCtrlGenes = FALSE,
   shrinklog2FC = FALSE
 )
@@ -17,7 +20,14 @@ TE_DEA(
 
 \item{folder}{Full path for folder of count files}
 
-\item{output}{Path for output folder}
+\item{output}{Path for output folder (default = ".")}
+
+\item{maxpadj}{P-adjusted value for significant features (default = 0.05)}
+
+\item{minlfc}{Value for dysregulated features (default = 1.0)}
+
+\item{device}{Format for graphs ("pdf", "svg", "eps", "png", "tiff", "jpeg").
+A vector for several formats can be uses: c("svg", "png") (Default: "png)}
 
 \item{useCtrlGenes}{Boolean for using only genes in estimating DESeq2 size factors (default: FALSE)}
 

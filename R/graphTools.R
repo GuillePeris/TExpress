@@ -1,0 +1,147 @@
+#' @import ggplot2
+#' @import ggrepel
+#' @import dplyr
+#' @import tibble
+#' @title Functions to plot DESeq2 results
+#'
+#' @param res 
+#' @param maxpadj 
+#' @param minlfc 
+#' @param plot.title 
+#'
+#' @returns
+#'
+# ¿CÓMO DECLARAR UN PAQUETE QUE CONTIENE VARIAS FUNCIONES? ¿O MEJOR LO SEPARO?
+graphTools <- function(res, maxpadj, minlfc, device = "png", 
+                       output_folder = ".", width = 7, height = 7, 
+                       plot.title = NULL) {
+  # Volcano plot
+  filename.volcano <- paste0(output_folder, "/volcanoPlot")
+  p.volcano <- volcanoPlot(res, maxpadj, minlfc, plot.title)
+  printDevice(p.volcano, filename.volcano, device, width = width, height = width)
+}
+
+printDevice <- function(plot, basename, device, width, height) {
+  
+  # Check devices
+  formats <- tolower(gsub("\\.", "", device))
+  allowed_devices <- c("pdf", "svg", "eps", "png", "tiff", "jpeg")
+  
+  stopifnot("Invalid Device(s)" = all(formats %in% allowed_devices))
+  
+  for (fmt in formats) {
+    outfile <- paste0(basename, ".", fmt)
+    
+    if (fmt == "png") {
+      ggsave(outfile, plot, width = width, height = height, 
+             dpi = 300, device = "png")
+    } else if (fmt == "eps") {
+      ggsave(outfile, plot, width = width, height = height, 
+             device = cairo_ps, fallback_resolution = 300)
+    } else {
+      ggsave(outfile, plot, width = width, height = height, device = fmt)
+    }
+  }
+  
+  # This is a procedure not returning anything
+  invisible()
+}
+
+volcanoPlot <- function(res, maxpadj, minlfc, plot.title) {
+  
+  # Parameter validation
+  if (!is.data.frame(res)) {
+    res <- as.data.frame(res)
+  }
+  if (!all(c("log2FoldChange", "padj") %in% colnames(res))) {
+    stop("El data frame debe contener las columnas 'log2FoldChange' y 'padj'")
+  }
+
+  # Compute axis limits
+  maxX <- max(2, max(abs(res$log2FoldChange), na.rm = TRUE) * 1.05)
+  maxY <- max(5, max(-log10(res$padj))*0.90)
+  
+  # Assign dysregulated tags
+  res$diffExpressed <- case_when(
+    res$log2FoldChange > minlfc & res$padj < maxpadj ~ "UP",
+    res$log2FoldChange < -minlfc & res$padj < maxpadj ~ "DOWN",
+    TRUE ~ "NS"
+  )
+  
+  # Counting differentially expressed features
+  nDiffExpressed <- c(
+    UP = sum(res$diffExpressed == "UP", na.rm = TRUE),
+    DOWN = sum(res$diffExpressed == "DOWN", na.rm = TRUE)
+  )
+
+  
+  # Managing outlier representation
+  res$log10padj <- -log10(res$padj)
+  outPointsList <- res$log10padj > maxY * 0.9
+  
+  outsidePoints <- NULL
+  if (any(outPointsList, na.rm = TRUE)) {
+    outsidePoints <- res[outPointsList, ]
+    outsidePoints$log10padj <- maxY * 0.9
+    res <- res[!outPointsList, ]
+  }
+  
+  #-------------------   Construcción del volcano plot  ----------------------#
+  mycolors <- c("DOWN" = "#0A9396", "UP" = "#AE2012", "NS" = "grey60")
+  
+  # Plot base
+  p <- ggplot(res, aes(x = log2FoldChange, y = log10padj, 
+                       col = diffExpressed)) + 
+    geom_point(alpha = 0.7) + 
+    theme_classic(base_size = 12, base_family = "Arial") +
+    scale_colour_manual(values = mycolors) +
+    xlim(-maxX, maxX) + 
+    ylim(0, maxY)
+  
+  # Outliers u y axis
+  if (!is.null(outsidePoints)) {
+    p <- p + geom_point(data = outsidePoints, 
+                        aes(x = log2FoldChange, y = log10padj), 
+                        shape = 25, size = 2)
+  }
+  
+  # Reference lines
+  p <- p + 
+    geom_vline(xintercept = c(-minlfc, minlfc), col = "brown", linetype = 2, linewidth = 0.5) +
+    geom_vline(xintercept = 0, linewidth = 0.3)
+  
+  if (-log10(maxpadj) < maxY) {
+    p <- p + geom_hline(yintercept = -log10(maxpadj), col = "brown", linewidth = 0.5)
+  }
+
+  # Theme management
+  p <- p + 
+    theme(
+      panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(),
+      panel.border = element_rect(colour = "black", fill = NA),
+      aspect.ratio = 1, 
+      axis.text = element_text(colour = 1, size = 16),
+      axis.line = element_line(colour = "black"),
+      legend.position = "none",
+      plot.title = element_text(hjust = 0.5, size = 14, color = "red")
+    ) +
+    labs(
+      title = plot.title, 
+      x = "log2(fold-change)", 
+      y = "-log10(adjusted p-value)"
+    )
+  
+  # Text annotations
+  p <- p + 
+    annotate("text", x = -maxX * 0.98, y = 0.97 * maxY, 
+             family = "Arial", fontface = 3, size = 4,
+             label = paste0("Down: ", nDiffExpressed["DOWN"]), 
+             colour = "black", hjust = 0) +
+    annotate("text", x = maxX * 0.98, y = 0.97 * maxY, 
+             family = "Arial", fontface = 3, size = 4,
+             label = paste0("Up: ", nDiffExpressed["UP"]), 
+             colour = "black", hjust = 1)
+  
+  p
+}
