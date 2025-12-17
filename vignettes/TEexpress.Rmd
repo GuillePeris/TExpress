@@ -2,7 +2,6 @@
 title: "TEexpress"
 author: "Guillermo Peris"
 date: "`r format(Sys.Date(), '%m/%d/%Y')`"
-abstract: > Tools to analyze transposable elements expression, annotate them in genomic regions and classify them as expressed from their own promoter or from a runthrough transcription.
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{TEexpress}
@@ -18,14 +17,12 @@ knitr::opts_chunk$set(
 ```
 
 # Introduction
-## Introduction
-
 **TEexpress** is an R package for the downstream analysis of transposable element (TE) expression from quantification tools such as *TEtranscripts*. In addition to performing differential expression analysis using *DESeq2*, **TEexpress** annotates TEs with respect to genomic features and classifies their expression as originating either from the TE’s own promoter (*self-expressed*) or from an external promoter, typically *gene-dependent*.
 
 # Standard workflow
 
 
 
-```{r setup}
+```{r setup, eval = FALSE}
 library(TEexpress)
 ```
