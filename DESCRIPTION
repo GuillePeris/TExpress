@@ -15,3 +15,7 @@ Imports:
     ggplot2,
     stringr,
     tibble
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
