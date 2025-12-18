@@ -12,6 +12,7 @@ Imports:
     data.table,
     DESeq2,
     dplyr,
+    extrafont,
     ggplot2,
     stringr,
     SummarizedExperiment,

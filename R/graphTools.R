@@ -1,6 +1,7 @@
 #' @import ggplot2
 #' @import dplyr
 #' @import tibble
+#' @import extrafont
 #' @importFrom grDevices cairo_ps
 #' @importFrom utils globalVariables
 #' @title Functions to plot DESeq2 results
