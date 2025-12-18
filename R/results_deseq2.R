@@ -1,5 +1,6 @@
 #' @import DESeq2
 #' @importFrom  stats complete.cases
+#' @importFrom SummarizedExperiment colData
 #' @title Get results after DESeq2 analysis
 #'
 #' @param dds Object from call_deseq2 function
