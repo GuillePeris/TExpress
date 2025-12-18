@@ -3,7 +3,7 @@ Tools to analyze transposable elements expression, annotate them in genomic regi
 
 ## Installation
 
-You can install the development version of regexcite from [GitHub](https://github.com/) with:
+You can install the development version of TEexpress from [GitHub](https://github.com/) with:
       
 ``` r
 # install.packages("devtools")
