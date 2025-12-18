@@ -57,17 +57,24 @@ TE_DEA <- function(metafile,
   output.gene<-paste0(output.genes, "/",  "gene_normalizedCounts.csv")
   write.table(gene.count, file=output.gene, sep="\t")
   
+  res.genes <- res[!stringr::str_detect(rownames(res), ":"), ]
+  output.gene.res<-paste0(output.genes, "/",  "DESeq2_gene_results.csv")
+  write.table(res.genes, file=output.gene.res, sep="\t")
+  
+  
   TE.count <- norm.counts[stringr::str_detect(rownames(norm.counts), ":"), ]
   output.TE<-paste0(output.TEs, "/",  "TE_normalizedCounts.csv")
   write.table(TE.count, file=output.TE, sep="\t")
+
+  res.TEs <- res[stringr::str_detect(rownames(res), ":"), ]
+  output.TE.res<-paste0(output.TEs, "/",  "DESeq2_TE_results.csv")
+  write.table(res.TEs, file=output.TE.res, sep="\t")
   
   # Graphs
   message("==> Creating graphs")
   
-  res.genes <- res[!stringr::str_detect(rownames(res), ":"), ]
   graphTools(res.genes, maxpadj, minlfc, device, 
              output.genes, plot.title = plot.title) 
-  res.TEs <- res[stringr::str_detect(rownames(res), ":"), ]
   graphTools(res.TEs, maxpadj, minlfc, device, 
              output.TEs, plot.title = plot.title) 
   

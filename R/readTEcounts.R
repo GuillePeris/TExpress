@@ -18,7 +18,7 @@
 readTEcounts <- function(metadata, folder) {
   
   # Construct file paths
-  file_paths <- file.path(folder, metadata$File)
+  file_paths <- file.path(folder, metadata[, 1])
   
   # Check all files exist before reading
   missing_files <- file_paths[!file.exists(file_paths)]
@@ -28,9 +28,9 @@ readTEcounts <- function(metadata, folder) {
   
   # Read all count files into a list
   count_list <- lapply(seq_along(file_paths), function(i) {
-    counts <- data.table::fread(file_paths[i], sep = "\t", header = TRUE) %>% 
-               tibble::column_to_rownames(names(.data)[1])
-    colnames(counts) <- metadata$Sample[i]
+    counts <- data.table::fread(file_paths[i], sep = "\t", header = TRUE) 
+    colnames(counts) <- c("feature", metadata$Sample[i]) 
+    counts <- counts %>% column_to_rownames("feature")
     counts
   })
   

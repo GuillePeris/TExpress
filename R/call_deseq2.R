@@ -27,12 +27,12 @@ call_deseq2 <- function(countData, metadata, useCtrlGenes) {
   }
   
   # Create coldata from metadata
-  colData <- metadata[, -1] %>% 
+  coldata <- metadata[, -1] %>% 
            dplyr::mutate(condition = factor(Condition, levels = expected_levels))
   
   # DESeq2 analysis
   dds <- DESeq2::DESeqDataSetFromMatrix(countData = countData,
-                                colData = colData,
+                                colData = coldata,
                                 design = ~ condition)
   
   # Use genes+TEs or only genes to estimate size factors.
