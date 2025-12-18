@@ -1,7 +1,6 @@
 #' @import ggplot2
 #' @import dplyr
 #' @import tibble
-#' @import extrafont
 #' @importFrom grDevices cairo_ps
 #' @importFrom utils globalVariables
 #' @title Functions to plot DESeq2 results
@@ -110,7 +109,7 @@ volcanoPlot <- function(res, maxpadj, minlfc, plot.title) {
   p <- ggplot(res, aes(x = log2FoldChange, y = log10padj, 
                        col = diffExpressed)) + 
     geom_point(alpha = 0.7) + 
-    theme_classic(base_size = 12, base_family = "Arial") +
+    theme_classic(base_size = 12) + #, base_family = "Arial") +
     scale_colour_manual(values = mycolors) +
     xlim(-maxX, maxX) + 
     ylim(0, maxY)
@@ -152,11 +151,11 @@ volcanoPlot <- function(res, maxpadj, minlfc, plot.title) {
   # Text annotations
   p <- p + 
     annotate("text", x = -maxX * 0.98, y = 0.97 * maxY, 
-             family = "Arial", fontface = 3, size = 4,
+             fontface = 3, size = 4, # family = "Arial",
              label = paste0("Down: ", nDiffExpressed["DOWN"]), 
              colour = "black", hjust = 0) +
     annotate("text", x = maxX * 0.98, y = 0.97 * maxY, 
-             family = "Arial", fontface = 3, size = 4,
+             fontface = 3, size = 4, # family = "Arial",
              label = paste0("Up: ", nDiffExpressed["UP"]), 
              colour = "black", hjust = 1)
   
@@ -211,7 +210,7 @@ MAPlot <- function(res, maxpadj, minlfc, plot.title) {
     geom_point(alpha = 0.7) +
     scale_colour_manual(values = mycolors) +
     scale_x_log10() +
-    theme_classic(base_size = 12, base_family = "Arial")
+    theme_classic(base_size = 12) #, base_family = "Arial")
   
   # Outliers
   if (!is.null(outsidePoints)) {
@@ -250,11 +249,11 @@ MAPlot <- function(res, maxpadj, minlfc, plot.title) {
   # Annotations
   p <- p + 
     annotate("text", x = max_baseMean, y = -maxY * 0.95, 
-             fontface = 3, family = "Arial", size = 4,
+             fontface = 3, size = 4, # family = "Arial",
              label = paste0("Underexpressed: ", nDiffExpressed["DOWN"]), 
              colour = "black", hjust = 1) +
     annotate("text", x = max_baseMean, y = maxY * 0.95, 
-             fontface = 3, family = "Arial", size = 4,
+             fontface = 3, size = 4, # family = "Arial",
              label = paste0("Overexpressed: ", nDiffExpressed["UP"]), 
              colour = "black", hjust = 1)
   p
