@@ -5,7 +5,7 @@
 #' @param dds Object from call_deseq2 function
 #' @param shrinklog2FC Boolean for applying log2FC shrinking in DESEq2
 #'
-#' @returns Data frame with DESeq2 results
+#' @returns Data frame with DESeq2 results 
 #' @export
 #' @examples
 #' \dontrun{
