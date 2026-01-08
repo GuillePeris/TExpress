@@ -13,6 +13,7 @@ Imports:
     ChIPseeker,
     data.table,
     DESeq2,
+    downloader,
     dplyr,
     GenomeInfoDb,
     GenomicFeatures,

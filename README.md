@@ -37,22 +37,27 @@ purpose we have **TE_DEA** function.
 
 ```r
 library(TEexpress)
-metafile <- system.file("extdata", "data.csv", package = "TEexpress") # Full path to table file
-folder <- system.file("extdata", package = "TEexpress")  # Full path to count file folder
+
+# Get test files
+my.data <- downloadTestData()
+folder <- my.data$folder
+metafile <- my.data$metafile
+output <- "results"
+plot.title <- "Test"
+gtf.genes.file <-my.data$gtf.gene.file
+gtf.TE.file <- my.data$gtf.TE.file
+
 output <- "results" # Full path to new results folder
 maxpadj <- 0.05     # P-adjusted value for significant features (default = 0.05)
 minlfc <- 1         # Value for dysregulated features (default = 1.0)
 device <- c("png", "svg") # Format for graphs
-gtf.TE.file <- ""
-plot.title <- "Test PA1 DGCR8-KO versus WT" # Title for graphs
-gtf.TE.file <- system.file("extdata", "Homo_sapiens.GRCh38.115_chr1.gtf", package = "TEexpress") # Full path to table file
+plot.title <- "Test PA1 DGCR8-KO versus WT in chrom 22" # Title for graphs
 TE_results <- TE_DEA(metafile, folder, output, maxpadj, minlfc, gtf.TE.file, device, plot.title)
 
 ```
 
 ## TE annotation to genomic regions
 ```r
-gtf.genes.file <- system.file("extdata", "Homo_sapiens.GRCh38.115_chr1.gtf", package = "TEexpress") # Full path to table file
 TE_results <- annotate_TE_regions(TE_results, gtf.genes.file, output, device, plot.title)
 ```
 
