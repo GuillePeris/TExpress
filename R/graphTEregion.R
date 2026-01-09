@@ -172,17 +172,17 @@ graphTEregion <- function(TE_results,
   treatSamples <- metadata$Sample[metadata$Condition == "Treat"]
   
   # Derive group names from sample prefixes
-  ctrlName <- .get_common_prefix(ctrlSamples)
-  treatName <- .get_common_prefix(treatSamples)
+  ctrlName <- unique(metadata$Group[metadata$Condition == "Control"])
+  treatName <- unique(metadata$Group[metadata$Condition == "Treat"])
   
-  if (nchar(ctrlName) == 0L) {
-    ctrlName <- "Control"
+  if(length(ctrlName) != 1) {
+    stop("Control samples must have the same group name in metadata file.")
   }
   
-  if (nchar(treatName) == 0L) {
-    treatName <- "Treatment"
+  if(length(treatName) != 1) {
+    stop("Control samples must have the same group name in metadata file.")
   }
-    
+  
   expressedTE.ctrl <- .get_expressed(TE.count, ctrlSamples, minCounts)
   expressedTE.treat <- .get_expressed(TE.count, treatSamples, minCounts)
  
@@ -311,43 +311,6 @@ graphTEregion <- function(TE_results,
   
   # Don't return anything
   invisible()
-}
-
-#' Get Common Prefix from Character Vector
-#'
-#' Finds the longest common prefix shared by all strings in a vector.
-#' Used to derive group names from sample names.
-#'
-#' @param strings Character vector
-#' @return Character string containing the common prefix (may be empty)
-#' @keywords internal
-#' @noRd
-.get_common_prefix <- function(strings) {
-  if (length(strings) == 0L) {
-    return("")
-  }
-  
-  if (length(strings) == 1L) {
-    # For single sample, remove trailing numbers
-    return(gsub("[0-9]+$", "", strings[1]))
-  }
-  
-  # Find common prefix
-  prefix <- strings[1]
-  
-  for (i in 2:length(strings)) {
-    while (!startsWith(strings[i], prefix)) {
-      prefix <- substr(prefix, 1, nchar(prefix) - 1)
-      if (nchar(prefix) == 0) {
-        return("")
-      }
-    }
-  }
-  
-  # Remove trailing non-letter characters
-  prefix <- sub("[^A-Za-z]+$", "", prefix)
-  
-  prefix
 }
 
 #' Get expressed TEs
