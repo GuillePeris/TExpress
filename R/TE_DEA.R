@@ -73,6 +73,7 @@
 #'   \item{res.TEs}{Data frame of DESeq2 results for TEs, including genomic
 #'     coordinates and TE annotations}
 #'   \item{TE.count}{Data frame of normalized counts for TEs across samples}
+#'   \item{gene.count}{Data frame of normalized counts for genes across samples}
 #'   \item{metadata}{Original metadata data frame used for the analysis}
 #' }
 #'
@@ -488,6 +489,7 @@ TE_DEA <- function(metafile,
   TE_results <- list(
     res.TEs = res.TEs,
     TE.count = TE.count,
+    gene.count = gene.count,
     metadata = metadata
   ) 
   

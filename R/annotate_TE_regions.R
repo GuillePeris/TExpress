@@ -9,6 +9,7 @@
 #'   \describe{
 #'     \item{res.TEs}{Data frame of DESeq2 results for TEs}
 #'     \item{TE.count}{Data frame of normalized counts for TEs}
+#'     \item{gene.count}{Data frame of normalized counts for genes}
 #'     \item{metadata}{Sample metadata data frame}
 #'   }
 #' @param gtf.genes.file Character string. Full path to GTF file containing
@@ -59,8 +60,9 @@
 #' \describe{
 #'   \item{res.TEs}{Data frame of DESeq2 results with added genomic annotation
 #'     columns (annotation, geneChr, geneStart, geneEnd, geneId, gene_name, etc.)}
-#'   \item{TE.count}{Data frame of normalized counts with added genomic annotation
+#'   \item{TE.count}{Data frame of normalized TE counts with added genomic annotation
 #'     columns}
+#'   \item{gene.count}{Data frame of normalized gene counts}
 #'   \item{metadata}{Original sample metadata (unchanged)}
 #' }
 #'
@@ -109,7 +111,7 @@ annotate_TE_regions <- function(TE_results,
     stop("'TE_results' must be a list.", call. = FALSE)
   }
   
-  required_elements <- c("res.TEs", "TE.count", "metadata")
+  required_elements <- c("res.TEs", "TE.count", "gene.count", "metadata")
   missing_elements <- setdiff(required_elements, names(TE_results))
   
   if (length(missing_elements) > 0L) {
@@ -134,6 +136,7 @@ annotate_TE_regions <- function(TE_results,
   # Extract and validate components
   res.TEs <- TE_results$res.TEs
   TE.count <- TE_results$TE.count
+  gene.count <- TE_results$gene.count
   metadata <- TE_results$metadata
   
   # ============================================================
@@ -365,6 +368,7 @@ annotate_TE_regions <- function(TE_results,
   TE_results_annotated <- list(
     res.TEs = res.TEs,
     TE.count = TE.count,
+    gene.count = gene.count,
     metadata = metadata
   )
   

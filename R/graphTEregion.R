@@ -13,6 +13,7 @@
 #'       \code{annotation}, \code{TE_class}}
 #'     \item{TE.count}{Data frame of normalized counts with genomic annotations.
 #'       Columns should be sample names plus annotation columns}
+#'     \item{gene.count}{Data frame of normalized counts for genes}
 #'     \item{metadata}{Sample metadata with columns: \code{Sample},
 #'       \code{Condition}}
 #'   }
