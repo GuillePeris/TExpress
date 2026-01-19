@@ -16,8 +16,8 @@
 #' @param output_folder Character string. Directory for saving results.
 #'   A subdirectory "classify_TE" will be created. Default is current directory.
 #' @param minNormCounts Numeric. Minimum normalized count threshold for
-#'   considering a feature "expressed". A feature must have normalized counts
-#'   >= this value in at least one condition to be considered expressed.
+#'   considering a feature "expressed". A feature must have normalized 
+#'   counts >= this value in at least one condition to be considered expressed.
 #'   Default is 10.
 #' @param maxpadj Numeric. Maximum adjusted p-value for filtering significantly
 #'   dysregulated TEs when \code{save != "all"}. Default is 0.05.
@@ -130,6 +130,7 @@ classify_TE_transcription <- function(TE_results,
                                       antisense_suffix = "_AS",
                                       save = "all",
                                       plot.title = NULL,
+                                      device = "png",
                                       width = 28,
                                       height = 7) {
 
@@ -216,12 +217,12 @@ classify_TE_transcription <- function(TE_results,
   
   # Pre-compute sample groups once
   sample_groups <- metadata %>%
-    dplyr::filter(Condition %in% c("Control", "Treat")) %>%
-    split(.$Condition)
+    dplyr::filter(.data$Condition %in% c("Control", "Treat")) %>%
+    split(.data$Condition)
   
   # Filter selected TEs by class
   res.TEs <- res.TEs %>% 
-    dplyr::filter(TE_class %in% TE_list)
+    dplyr::filter(.data$TE_class %in% TE_list)
   
   # Get expressed TEs and genes
   expressed.TEs <- .get_expressed_features(sample_groups, TE.count, minNormCounts)
@@ -310,17 +311,17 @@ classify_TE_transcription <- function(TE_results,
 
   # Filter TEs to save. First, only expressed TEs are kept.
   res.out <- res.TEs %>% 
-    dplyr::filter(row.names(.) %in% expressed.TEs)
+    dplyr::filter(row.names(.data) %in% expressed.TEs)
   
   if(save == "dys") {
     res.out <- res.out %>% 
-      dplyr::filter(padj <= maxpadj, abs(log2FoldChange) >= minlfc)
+      dplyr::filter(.data$padj <= maxpadj, abs(.data$log2FoldChange) >= minlfc)
   } else if (save == "up") {
     res.out <- res.out %>% 
-      dplyr::filter(padj <= maxpadj, log2FoldChange >= minlfc)
+      dplyr::filter(.data$padj <= maxpadj, .data$log2FoldChange >= minlfc)
   } else if (save == "down") {
     res.out <- res.out %>% 
-      dplyr::filter(padj <= maxpadj, log2FoldChange <= -minlfc)
+      dplyr::filter(.data$padj <= maxpadj, .data$log2FoldChange <= -minlfc)
   }  
   
   tryCatch(
@@ -412,7 +413,8 @@ classify_TE_transcription <- function(TE_results,
   # Calculate minimums in one pass
   min_cols <- as.data.frame(
     lapply(sample_groups, function(grp) {
-      matrixStats::rowMins(as.matrix(counts.df[, grp$Sample]), na.rm = TRUE) 
+      # matrixStats::rowMins(as.matrix(counts.df[, grp$Sample]), na.rm = TRUE)
+      apply(as.matrix(counts.df[, grp$Sample]), 1, min, na.rm = TRUE) 
     }))
   
   # Add to norm.counts with proper names
@@ -422,7 +424,8 @@ classify_TE_transcription <- function(TE_results,
   # Filter expressed genes and TEs
   min_matrix <- as.matrix(counts.df[, startsWith(colnames(counts.df), "min_")])
   expressed <- counts.df %>%
-    dplyr::filter(matrixStats::rowMaxs(min_matrix) >= minNormCounts) %>% 
+#    dplyr::filter(matrixStats::rowMaxs(min_matrix) >= minNormCounts) %>% 
+    dplyr::filter(apply(min_matrix, 1, max, na.rm = TRUE) >= minNormCounts) %>% 
     rownames()
   expressed
 }

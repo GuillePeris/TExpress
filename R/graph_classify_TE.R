@@ -20,6 +20,13 @@
 #' @param labels Named character vector. Labels for TE expression types in
 #'   legend. Default is c("dependent" = "Gene-dependent TEs",
 #'   "self" = "Self-expressed TEs").
+#' @param save Character string. Which TEs to save in output file:
+#'   \itemize{
+#'     \item "all": All expressed TEs (default)
+#'     \item "dys": Only significantly dysregulated TEs (up or down)
+#'     \item "up": Only significantly upregulated TEs
+#'     \item "down": Only significantly downregulated TEs
+#'   }
 #'
 #' @details
 #' The function creates a pie chart for each TE class showing:
@@ -151,12 +158,12 @@ TE_classify_pie <- function(res,
 
   # Calculate proportions by TE class
   res_summary <- res %>%
-    dplyr::count(TE_expression, TE_class) %>%
-    dplyr::group_by(TE_class) %>%
+    dplyr::count(.data$TE_expression, .data$TE_class) %>%
+    dplyr::group_by(.data$TE_class) %>%
     dplyr::reframe(
-      TE_class = TE_class,
-      TE_expression = TE_expression,
-      prop = n / sum(n) * 100
+      TE_class = .data$TE_class,
+      TE_expression = .data$TE_expression,
+      prop = .data$n / sum(.data$n) * 100
     )
   
   res_summary$TE_expression <- factor(res_summary$TE_expression)
@@ -174,7 +181,7 @@ TE_classify_pie <- function(res,
       ggplot2::vars(.data$TE_class), 
       ncol = nTE_class
     )  +
-    ggplot2::geom_text(ggplot2::aes(label = sprintf("%0.1f%%", prop)), 
+    ggplot2::geom_text(ggplot2::aes(label = sprintf("%0.1f%%", .data$prop)), 
                        position = ggplot2::position_stack(vjust=0.5),
                        size=8) +
     ggplot2::scale_fill_manual(
