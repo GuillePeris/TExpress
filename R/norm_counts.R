@@ -37,7 +37,7 @@ norm_counts <- function(dds) {
     stop("Argument 'dds' is missing with no default.", call. = FALSE)
   }
   
-  if (!methods::is(dds, "DESeqDataSet")) {
+  if (!inherits(dds, "DESeqDataSet")) {
     stop("'dds' must be a DESeqDataSet object.", call. = FALSE)
   }
   

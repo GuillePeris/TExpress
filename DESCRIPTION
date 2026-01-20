@@ -13,7 +13,6 @@ Imports:
     ChIPseeker,
     data.table,
     DESeq2,
-    downloader,
     dplyr,
     GenomeInfoDb,
     GenomicFeatures,
@@ -23,7 +22,7 @@ Imports:
     ggplot2,
     ggpubr,
     magrittr,
-    methods,
+    matrixStats,
     rlang,
     rtracklayer,
     scales,
@@ -31,6 +30,7 @@ Imports:
     SummarizedExperiment,
     tibble
 Suggests: 
+    downloader,
     knitr,
     rmarkdown,
     apeglm
