@@ -33,5 +33,7 @@ Suggests:
     downloader,
     knitr,
     rmarkdown,
-    apeglm
+    apeglm,
+    webr,
+    grDevices
 VignetteBuilder: knitr

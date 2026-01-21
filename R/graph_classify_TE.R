@@ -114,7 +114,7 @@ TE_classify_pie <- function(res,
   filename <- file.path(output_folder, paste0("pie_TE_classes_", save))
   
   p <- tryCatch(
-    .create_pie_plot(res = res, 
+    create_pie_plot(res = res, 
                       plot.title = plot.title,
                       colors = colors,
                       labels = labels
@@ -143,7 +143,7 @@ TE_classify_pie <- function(res,
   filename <- file.path(output_folder, paste0("stack_bar_TE_classes_", save))
   
   p <- tryCatch(
-    .create_grouped_stack_bar(res = res, 
+    create_grouped_stack_bar(res = res, 
                               plot.title = plot.title
                              ),
     error = function(e) {
@@ -182,7 +182,7 @@ TE_classify_pie <- function(res,
 #' @keywords internal
 #' @noRd
 #'
-.create_pie_plot <- function(res,
+create_pie_plot <- function(res,
                              plot.title = NULL,
                              colors = c("dependent" = "#FF1F5B", "self" = "#009ADE"),
                              labels = c("dependent" = "Gene-dependent TEs",
@@ -234,7 +234,7 @@ TE_classify_pie <- function(res,
 }
 
 
-.create_grouped_stack_bar <- function(res,
+create_grouped_stack_bar <- function(res,
                              plot.title = NULL) {
  
   # Calculate proportions by TE class
@@ -328,4 +328,58 @@ TE_classify_pie <- function(res,
   }
   
   p 
+}
+
+create_pie_donut <- function(res,
+                             TE_feature,
+                             plot.title = NULL,
+                             output_folder = ".",
+                             height = 7,
+                             width = 7,
+                             prefix = NULL) {
+  
+  # Validate input
+  
+  if (!dir.exists(output_folder)) {
+    tryCatch(
+      dir.create(output_folder, recursive = TRUE),
+      error = function(e) {
+        stop(
+          "Cannot create output directory '", output_folder, "': ",
+          e$message,
+          call. = FALSE
+        )
+      }
+    )
+  }
+  
+  # Get TE_feature type
+  TE_type <- .determine_broad_type(res, TE_feature)
+  
+  # Filter by TE_feature
+  res_summary <- res %>% 
+    dplyr::filter(.data[[TE_type]] == TE_feature)
+  names(res_summary)[names(res_summary) == "TE_expression"] <- TE_feature
+  
+  res_summary$expression_type <- droplevels(res_summary$expression_type)
+  
+  
+  # Create pie plots
+  if(!is.null(prefix) & !startsWith(prefix, "_")) {
+    prefix <- paste0("_", prefix)
+  }
+  
+  filename <- file.path(output_folder, 
+                        paste0("donut_pie_", TE_feature, prefix, ".png"))
+  
+  grDevices::png(filename, width=width, height=height, res=300, units = "in")
+  webr::PieDonut(res_summary,
+                 ggplot2::aes(pies=!!TE_feature,
+                              donuts=!!quote(expression_type)), 
+           showRatioThreshold = 0.001, 
+           labelposition=0, 
+           pieLabelSize = 8, donutLabelSize = 5,  showPieName=TRUE,
+           ratioByGroup=FALSE, titlesize = 10)
+  
+  grDevices::dev.off()
 }
