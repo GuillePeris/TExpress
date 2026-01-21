@@ -16,8 +16,10 @@ classify_TE_transcription(
   save = "all",
   plot.title = NULL,
   device = "png",
-  width = 28,
-  height = 7
+  width.pie = 14,
+  height.pie = 7,
+  width.bar = 7,
+  height.bar = 7
 )
 }
 \arguments{
@@ -67,9 +69,13 @@ If NULL, no title is displayed. Default is NULL.}
 \item{device}{Character vector. File format(s) for output plots.
 Default is "png".}
 
-\item{width}{Numeric. Plot width in inches. Default is 28.}
+\item{width.pie}{Numeric. Plot width in inches. Default is 14.}
 
-\item{height}{Numeric. Plot height in inches. Default is 7.
+\item{height.pie}{Numeric. Plot height in inches. Default is 7.}
+
+\item{width.bar}{Numeric. Plot width in inches. Default is 7.}
+
+\item{height.bar}{Numeric. Plot height in inches. Default is 7.
 
 TEs are classified into two broad categories:
 \enumerate{

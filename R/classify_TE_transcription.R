@@ -41,9 +41,11 @@
 #'   If NULL, no title is displayed. Default is NULL.
 #' @param device Character vector. File format(s) for output plots.
 #'   Default is "png".
-#' @param width Numeric. Plot width in inches. Default is 28.
-#' @param height Numeric. Plot height in inches. Default is 7.
-#'
+#' @param width.pie Numeric. Plot width in inches. Default is 14.
+#' @param height.pie Numeric. Plot height in inches. Default is 7.
+#' @param width.bar Numeric. Plot width in inches. Default is 7.
+#' @param height.bar Numeric. Plot height in inches. Default is 7.
+#' 
 #' TEs are classified into two broad categories:
 #' \enumerate{
 #'   \item \strong{Gene-dependent (runthrough transcription)}:
@@ -131,8 +133,10 @@ classify_TE_transcription <- function(TE_results,
                                       save = "all",
                                       plot.title = NULL,
                                       device = "png",
-                                      width = 28,
-                                      height = 7) {
+                                      width.pie = 14,
+                                      height.pie = 7,
+                                      width.bar = 7,
+                                      height.bar = 7) {
 
   message("============================================") 
   message("    TE loci transcription classification    ")
@@ -373,8 +377,10 @@ classify_TE_transcription <- function(TE_results,
         res = res.out,
         plot.title = final_title,
         device = device,
-        width = width,
-        height = height,
+        width.pie = width.pie,
+        height.pie = height.pie,
+        width.bar = width.bar,
+        height.bar = height.bar,
         output_folder = output_folder,
         save = save
       )

@@ -8,8 +8,10 @@ TE_classify_pie(
   res,
   plot.title = NULL,
   device = "png",
-  width = 28,
-  height = 7,
+  width.pie = 14,
+  height.pie = 7,
+  width.bar = 7,
+  height.bar = 7,
   output_folder = ".",
   colors = c(dependent = "#FF1F5B", self = "#009ADE"),
   labels = c(dependent = "Gene-dependent TEs", self = "Self-expressed TEs"),
@@ -25,10 +27,15 @@ no title is displayed.}
 \item{device}{Character vector. File format(s) for output plots. Supported:
 "pdf", "svg", "eps", "png", "tiff", "jpeg". Default is "png".}
 
-\item{width}{Numeric. Plot width in inches. Default is 28 (suitable for
+\item{width.pie}{Numeric. Plot width in inches for pie graph. Default is 14 (suitable for
 4-6 TE classes).}
 
-\item{height}{Numeric. Plot height in inches. Default is 7.}
+\item{height.pie}{Numeric. Plot height in inches for pie graph. Default is 7.}
+
+\item{width.bar}{Numeric. Plot width in inches for stack. Default is 7 (suitable for
+4-6 TE classes).}
+
+\item{height.bar}{Numeric. Plot height in inches for stack bar. Default is 7.}
 
 \item{output_folder}{Character string. Directory where plots will be saved.
 Default is current directory (".").}

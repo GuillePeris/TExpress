@@ -9,9 +9,12 @@
 #'   no title is displayed.
 #' @param device Character vector. File format(s) for output plots. Supported:
 #'   "pdf", "svg", "eps", "png", "tiff", "jpeg". Default is "png".
-#' @param width Numeric. Plot width in inches. Default is 28 (suitable for
+#' @param width.pie Numeric. Plot width in inches for pie graph. Default is 14 (suitable for
 #'   4-6 TE classes).
-#' @param height Numeric. Plot height in inches. Default is 7.
+#' @param height.pie Numeric. Plot height in inches for pie graph. Default is 7.
+#' @param height.bar Numeric. Plot height in inches for stack bar. Default is 7.
+#' @param width.bar Numeric. Plot width in inches for stack. Default is 7 (suitable for
+#'   4-6 TE classes).
 #' @param output_folder Character string. Directory where plots will be saved.
 #'   Default is current directory (".").
 #' @param colors Named character vector. Colors for TE expression types.
@@ -57,8 +60,10 @@
 TE_classify_pie <- function(res,
                             plot.title = NULL,
                             device = "png",
-                            width = 28,
-                            height = 7,
+                            width.pie = 14,
+                            height.pie = 7,
+                            width.bar = 7,
+                            height.bar = 7,
                             output_folder = ".",
                             colors = c("dependent" = "#FF1F5B", "self" = "#009ADE"),
                             labels = c("dependent" = "Gene-dependent TEs",
@@ -105,7 +110,7 @@ TE_classify_pie <- function(res,
   }
   
   
-  # Create plot
+  # Create pie plots
   filename <- file.path(output_folder, paste0("pie_TE_classes_", save))
   
   p <- tryCatch(
@@ -125,7 +130,34 @@ TE_classify_pie <- function(res,
   # Save plot 
   tryCatch(
     printDevice(p, filename, device,
-                width = width, height = height),
+                width = width.pie, height = height.pie),
+    error = function(e) {
+      warning(
+        "Failed to save pie TE classify plot: ", e$message,
+        call. = FALSE
+      )
+    }
+  )
+  
+  # Create stack bar plots
+  filename <- file.path(output_folder, paste0("stack_bar_TE_classes_", save))
+  
+  p <- tryCatch(
+    .create_grouped_stack_bar(res = res, 
+                              plot.title = plot.title
+                             ),
+    error = function(e) {
+      stop(
+        "Failed to create stack bar TE classify plot: ", e$message,
+        call. = FALSE
+      )
+    }
+  )
+  
+  # Save plot 
+  tryCatch(
+    printDevice(p, filename, device,
+                width = width.bar, height = height.bar),
     error = function(e) {
       warning(
         "Failed to save pie TE classify plot: ", e$message,
@@ -167,7 +199,6 @@ TE_classify_pie <- function(res,
     )
   
   res_summary$TE_expression <- factor(res_summary$TE_expression)
-  
   nTE_class <- length(unique(res$TE_class))
   
   p <- ggplot2::ggplot(
@@ -183,7 +214,7 @@ TE_classify_pie <- function(res,
     )  +
     ggplot2::geom_text(ggplot2::aes(label = sprintf("%0.1f%%", .data$prop)), 
                        position = ggplot2::position_stack(vjust=0.5),
-                       size=8) +
+                       size=6) +
     ggplot2::scale_fill_manual(
       labels = labels,
       values = colors
@@ -200,4 +231,101 @@ TE_classify_pie <- function(res,
   }
   
   p
+}
+
+
+.create_grouped_stack_bar <- function(res,
+                             plot.title = NULL) {
+ 
+  # Calculate proportions by TE class
+  res_summary <- res %>%
+    dplyr::count(.data$TE_expression, 
+                 .data$expression_type, 
+                 .data$TE_class) %>%
+    dplyr::group_by(.data$TE_class) %>%
+    dplyr::reframe(
+      TE_class = .data$TE_class,
+      TE_expression = .data$TE_expression,
+      expression_type = .data$expression_type,
+      prop = .data$n / sum(.data$n) * 100
+    )
+  
+  res_summary$TE_expression <- factor(res_summary$TE_expression)
+  res_summary$expression_type <- factor(res_summary$expression_type)
+  levels(res_summary$TE_expression)[levels(res_summary$TE_expression) == "dependent"] <- "dep."
+  nTE_class <- length(unique(res$TE_class))
+  
+  p <- ggplot2::ggplot(
+    res_summary,
+    ggplot2::aes(x = .data$TE_expression, 
+                 y = .data$prop, 
+                 fill = .data$expression_type,
+                 ymin = 0,
+                 ymax = max(.data$prop + 5, 100)
+    )
+  ) + 
+    ggplot2::geom_bar(width = 1, stat = "identity", color = "white") +
+    ggplot2::facet_grid(
+      cols = ggplot2::vars(.data$TE_class)
+  )   
+  
+  
+  # Add percentage labels
+  p <- p +
+    ggfittext::geom_fit_text(
+      ggplot2::aes(label = sprintf("%0.1f%%", .data$prop)),
+      min.size = 8,
+      size = 16,
+      position = ggplot2::position_stack(vjust = 0.5),
+      contrast = TRUE,
+      show.legend = FALSE
+    )
+  
+  # Apply theme
+  p <- p +
+    ggplot2::theme(
+      # Grid
+      panel.grid.major = ggplot2::element_line(color = "grey90", linewidth = 0.5),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+
+      # Background
+      panel.background = ggplot2::element_rect(fill = "white", color = NA),
+      plot.background = ggplot2::element_rect(fill = "white", color = NA),
+      
+      # Axis
+      axis.text = ggplot2::element_text(colour = "grey30", size = 12),
+      axis.title.x = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_text(
+        size = 20,
+        colour = "grey30",
+        hjust = 0.5,
+        margin = ggplot2::margin(r = 10)
+      ),
+      axis.ticks.y = ggplot2::element_line(color = "grey30", linewidth = 0.5),
+      axis.ticks.length.y = ggplot2::unit(0.25, "cm"),
+      
+      # Legend
+      legend.text = ggplot2::element_text(size = 12),
+      legend.title = ggplot2::element_blank(),
+      plot.title = ggplot2::element_text(hjust = 0.5, size = 24, color = "red")
+    ) +
+    ggplot2::labs(
+      y = "% TE loci"
+    )
+  
+  # Format y-axis as percentages
+  p <- p +
+    ggplot2::scale_y_continuous(
+      labels = function(x) paste0(x, " %"),
+      expand = c(0, 1)
+    )
+  
+  
+  # Add title if provided
+  if (!is.null(plot.title)) {
+    p <- p + ggplot2::ggtitle(plot.title)
+  }
+  
+  p 
 }
