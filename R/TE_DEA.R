@@ -363,76 +363,38 @@ TE_DEA <- function(metafile,
   # Save normalized counts if requested
   if (saveNorm) {
     output.genefile <- file.path(output.genes, "gene_normalizedCounts.tsv")
-    tryCatch(
-      {
-        utils::write.table(
-          gene.count,
-          file = output.genefile,
-          sep = "\t",
-          quote = FALSE,
-          row.names = TRUE,
-          col.names = NA
-        )
-      },
-      error = function(e) {
-        warning("Failed to save gene normalized counts: ", e$message,
-                call. = FALSE)
-      }
-    )
-    
+    .save_deseq2(gene.count, output.genefile, "gene normalized counts")
+
     output.TEfile <- file.path(output.TEs, "TE_normalizedCounts.tsv")
-    tryCatch(
-      {
-        utils::write.table(
-          TE.count,
-          file = output.TEfile,
-          sep = "\t",
-          quote = FALSE,
-          row.names = TRUE,
-          col.names = NA
-        )
-      },
-      error = function(e) {
-        warning("Failed to save TE normalized counts: ", e$message,
-                call. = FALSE)
-      }
-    )
+    .save_deseq2(TE.count, output.TEfile, "TE normalized counts")
   }
   
-  # Save DESeq2 results
-  output.gene.res.file <- file.path(output.genes, "DESeq2_gene_results.tsv")
-  tryCatch(
-    {
-      utils::write.table(
-        res.genes,
-        file = output.gene.res.file,
-        sep = "\t",
-        quote = FALSE,
-        row.names = TRUE,
-        col.names = NA
-      )
-    },
-    error = function(e) {
-      stop("Failed to save gene results: ", e$message, call. = FALSE)
-    }
-  )
+  #--- Save DESeq2 results
   
+  # Genes
+  output.gene.res.file <- file.path(output.genes, "DESeq2_gene_results.tsv")
+  .save_deseq2(res.genes, output.gene.res.file, "gene results")
+  
+  res.genes.up <- res.genes %>% dplyr::filter(.data$log2FoldChange > minlfc, 
+                                       .data$padj < maxpadj)
+  output.gene.up.file <- file.path(output.genes, "DESeq2_gene_up_results.tsv")
+  .save_deseq2(res.genes.up, output.gene.up.file, "gene up results")
+  
+  res.genes.down <- res.genes %>% dplyr::filter(log2FoldChange < -minlfc, padj < maxpadj)
+  output.gene.down.file <- file.path(output.genes, "DESeq2_gene_down_results.tsv")
+  .save_deseq2(res.genes.down, output.gene.down.file, "gene down results")
+  
+  # TEs
   output.TE.res.file <- file.path(output.TEs, "DESeq2_TE_results.tsv")
-  tryCatch(
-    {
-      utils::write.table(
-        res.TEs,
-        file = output.TE.res.file,
-        sep = "\t",
-        quote = FALSE,
-        row.names = TRUE,
-        col.names = NA
-      )
-    },
-    error = function(e) {
-      stop("Failed to save TE results: ", e$message, call. = FALSE)
-    }
-  )
+  .save_deseq2(res.TEs, output.TE.res.file, "TE results")
+
+  res.TEs.up <- res.TEs %>% dplyr::filter(log2FoldChange > minlfc, padj < maxpadj)
+  output.TE.up.file <- file.path(output.TEs, "DESeq2_TE_up_results.tsv")
+  .save_deseq2(res.TEs.up, output.TE.up.file, "TE up results")
+  
+  res.TEs.down <- res.TEs %>% dplyr::filter(log2FoldChange < -minlfc, padj < maxpadj)
+  output.TE.down.file <- file.path(output.TEs, "DESeq2_TE_down_results.tsv")
+  .save_deseq2(res.TEs.down, output.TE.down.file, "TE down results")
   
   end.time <- Sys.time()
   duration <- difftime(end.time, start.time, units="secs")
@@ -495,4 +457,42 @@ TE_DEA <- function(metafile,
   ) 
   
   TE_results
+}
+
+
+#' Saves differential expression results
+#'
+#' Writes to file differential expression results
+#'
+#' @param df Data frame to save 
+#' @param file File name
+#' @return Invisible NULL.
+#' @keywords internal
+#' @noRd
+#' 
+.save_deseq2 <- function(df, file, message = NULL) {
+  if (missing(df)) {
+    stop("Argument 'df' is missing with no default.", call. = FALSE)
+  }
+  
+  if (missing(file)) {
+    stop("Argument 'df' is missing with no default.", call. = FALSE)
+  }
+  
+  tryCatch(
+    {
+      utils::write.table(
+        df,
+        file = file,
+        sep = "\t",
+        quote = FALSE,
+        row.names = TRUE,
+        col.names = NA
+      )
+    },
+    error = function(e) {
+      stop("Failed to save ", message, ": ", e$message, call. = FALSE)
+    }
+  )
+  
 }
