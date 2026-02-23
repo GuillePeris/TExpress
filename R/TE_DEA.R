@@ -466,6 +466,7 @@ TE_DEA <- function(metafile,
 #'
 #' @param df Data frame to save 
 #' @param file File name
+#' @param message String to be added to error message
 #' @return Invisible NULL.
 #' @keywords internal
 #' @noRd
