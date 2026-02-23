@@ -16,6 +16,8 @@
 #'   gene annotations. Should include protein-coding genes with transcript
 #'   information. Must have columns: \code{type}, \code{transcript_biotype},
 #'   \code{gene_biotype}, \code{gene_id}, \code{gene_name}.
+#' @param gtf.format Character string. Format of gene GTF file: "gtf" (default),
+#'        "gff3· or "gff".
 #' @param output_folder Character string. Path for output directory. A
 #'   subdirectory "TEs_annotated" will be created inside this folder. Default
 #'   is current directory (".").
@@ -95,6 +97,7 @@
 #'
 annotate_TE_regions <- function(TE_results,
                            gtf.genes.file,
+                           gtf.format = "gtf",
                            output_folder = ".",
                            device = "png",
                            plot.title = NULL,
@@ -153,7 +156,7 @@ annotate_TE_regions <- function(TE_results,
   start.time <- Sys.time()
   
   gtf.genes <- tryCatch(
-    importGTF(gtf.genes.file, format = "gtf"),
+    importGTF(gtf.genes.file, format = gtf.format),
     error = function(e) {
       stop("Failed to import gene GTF file: ", e$message, call. = FALSE)
     }
@@ -347,30 +350,21 @@ annotate_TE_regions <- function(TE_results,
   
   # Save annotated results
   output.TE.res <- file.path(output_annotated, "DESeq2_TE_results_annotated.tsv")
+  .save_deseq2(res.TEs, output.TE.res, "TE annotated results")
   
-  tryCatch(
-    {
-      utils::write.table(
-        res.TEs,
-        file = output.TE.res,
-        sep = "\t",
-        quote = FALSE,
-        row.names = TRUE,
-        col.names = NA
-      )
-    },
-    error = function(e) {
-      stop(
-        "Failed to save annotated results: ", e$message,
-        call. = FALSE
-      )
-    }
-  )
+  res.TEs.down <- res.TEs %>% dplyr::filter(log2FoldChange < -minlfc, padj < maxpadj)
+  output.TE.res.down <- file.path(output_annotated, "DESeq2_TE_results_down_annotated.tsv")
+  .save_deseq2(res.TEs.down, output.TE.res.down, "TE down annotated results")
+
+  res.TEs.up <- res.TEs %>% dplyr::filter(log2FoldChange > minlfc, padj < maxpadj)
+  output.TE.res.up <- file.path(output_annotated, "DESeq2_TE_results_up_annotated.tsv")
+  .save_deseq2(res.TEs.up, output.TE.res.up, "TE up annotated results")
+  
   
   end.time <- Sys.time()
   duration <- difftime(end.time, start.time, units = "secs")
   message("       -> Finished saving results (", round(duration[[1]], 2), " seconds)")
-  
+   
   #============================================================
   # Step 7: Generate Region Distribution Plots
   #============================================================
