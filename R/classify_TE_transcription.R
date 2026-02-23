@@ -250,47 +250,56 @@ classify_TE_transcription <- function(TE_results,
   index.ex <- is.na(res.TEs$TE_expression) &
               res.TEs$annotation %in% c("Exon", "3' UTR", "5' UTR") &
               res.TEs$strand == res.TEs$geneStrand
-  res.TEs[index.ex, ]$TE_expression <- "dependent"
-  res.TEs[index.ex, ]$expression_type <- "Exon"
-  
+  if(any(index.ex)) {
+     res.TEs[index.ex, ]$TE_expression <- "dependent"
+     res.TEs[index.ex, ]$expression_type <- "Exon"
+  }
   #    + 3utr_ext:  Pervasive transcription (non-annotated 3' UTRs)
   # Notice we are not checking 3'UTR gene strand (not computed)
   index.3utr_ext <- is.na(res.TEs$TE_expression) &
                     res.TEs$annotation %in% c("3utr_ext")
-  res.TEs[index.3utr_ext, ]$TE_expression <- "dependent"
-  res.TEs[index.3utr_ext, ]$expression_type <- "3UTR ext"
+  if(any(index.3utr_ext)) {
+    res.TEs[index.3utr_ext, ]$TE_expression <- "dependent"
+    res.TEs[index.3utr_ext, ]$expression_type <- "3UTR ext"
+  }
   
   #    + In_g:      Intron (SS) gene expression
   index.in_g <- is.na(res.TEs$TE_expression) & 
                 res.TEs$annotation %in% c("Intron") & 
                 res.TEs$geneId %in% expressed.genes &
                 res.TEs$strand == res.TEs$geneStrand
-  
-  res.TEs[index.in_g, ]$TE_expression <- "dependent"
-  res.TEs[index.in_g, ]$expression_type <- "Intron expressed"
+  if(any(index.in_g)) {
+    res.TEs[index.in_g, ]$TE_expression <- "dependent"
+    res.TEs[index.in_g, ]$expression_type <- "Intron expressed"
+  }
   
   #    + In_ng:     Intron no gene expression
   index.in_ng <- is.na(res.TEs$TE_expression) & 
                  res.TEs$annotation %in% c("Intron") & 
                  !(res.TEs$geneId %in% expressed.genes) &
     res.TEs$strand == res.TEs$geneStrand
-  
-  res.TEs[index.in_ng, ]$TE_expression <- "self"
-  res.TEs[index.in_ng, ]$expression_type <- "Intron no expressed"
+  if(any(index.in_ng)) {
+    res.TEs[index.in_ng, ]$TE_expression <- "self"
+    res.TEs[index.in_ng, ]$expression_type <- "Intron no expressed"
+  }
   
   #    + Antisense:     TE_strand != tx_strand
   if(antisense) {
     index.antisense <- is.na(res.TEs$TE_expression) & 
                        endsWith(res.TEs$TE_element, antisense_suffix) 
-    
-    res.TEs[index.antisense, ]$TE_expression <- "dependent"
-    res.TEs[index.antisense, ]$expression_type <- "Antisense"
+  
+    if(any(index.antisense)) {  
+      res.TEs[index.antisense, ]$TE_expression <- "dependent"
+      res.TEs[index.antisense, ]$expression_type <- "Antisense"
+    }
   }
   
   #    + nRT:       Non read-through 
   index.nRT <- is.na(res.TEs$TE_expression)
-  res.TEs[index.nRT, ]$expression_type <- "nRT"
-  res.TEs[index.nRT, ]$TE_expression <- "self"
+  if(any(index.nRT)) {
+    res.TEs[index.nRT, ]$expression_type <- "nRT"
+    res.TEs[index.nRT, ]$TE_expression <- "self"
+  }
   
   res.TEs$expression_type <- factor(res.TEs$expression_type)
   
@@ -378,7 +387,7 @@ classify_TE_transcription <- function(TE_results,
   # Generate pie charts
   tryCatch(
     {
-      TE_classify_pie(
+      graph_classify_TE(
         res = res.out,
         plot.title = final_title,
         device = device,
