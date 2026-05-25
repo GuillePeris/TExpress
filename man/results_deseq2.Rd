@@ -4,7 +4,7 @@
 \alias{results_deseq2}
 \title{Get Results After DESeq2 Analysis}
 \usage{
-results_deseq2(dds, shrinklog2FC)
+results_deseq2(dds, shrinklog2FC = FALSE)
 }
 \arguments{
 \item{dds}{A DESeqDataSet object as returned by \code{\link{call_deseq2}} or

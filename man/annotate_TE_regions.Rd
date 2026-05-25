@@ -10,6 +10,7 @@ annotate_TE_regions(
   gtf.format = "gtf",
   output_folder = ".",
   device = "png",
+  gene_biotypes = "protein_coding",
   plot.title = NULL,
   maxpadj = 0.05,
   minlfc = 1,
@@ -44,6 +45,8 @@ is current directory (".").}
 \item{device}{Character vector. File format(s) for output plots. Supported:
 "svg", "eps", "png", "tiff", "jpeg". Can specify multiple formats.
 Default is "png".}
+
+\item{gene_biotypes}{Character vector. Features with exons. Default is "protein_coding",}
 
 \item{plot.title}{Character string. Title for the region distribution plots.
 If NULL (default), a generic title will be used.}

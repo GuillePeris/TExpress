@@ -57,7 +57,7 @@ for ranking and visualization. Default is FALSE.}
 genes and TEs. If FALSE, only saves DESeq2 results. Default is TRUE.}
 }
 \value{
-A list with three elements:
+A list with four elements:
 \describe{
 \item{res.TEs}{Data frame of DESeq2 results for TEs, including genomic
 coordinates and TE annotations}

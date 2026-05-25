@@ -9,8 +9,8 @@ TE_genomic_context(
   gene.TxDb,
   gene_names,
   transcript.gr,
-  TSSminus = -5000,
-  TSSplus = 5000,
+  TSSminus = -1000,
+  TSSplus = 1000,
   downstream = 10000,
   is_ext_3UTR = FALSE,
   ext_3UTR_file = NULL
@@ -35,10 +35,10 @@ gene to intergenic TEs. Typically obtained by filtering a gene GTF for
 entries where \code{type == "transcript"}.}
 
 \item{TSSminus}{Integer. Number of bases upstream of TSS to define promoter
-region. Should be negative. Default is -5000 (5kb upstream).}
+region. Should be negative. Default is -1000 (1kb upstream).}
 
 \item{TSSplus}{Integer. Number of bases downstream of TSS to define promoter
-region. Should be positive. Default is 5000 (5kb downstream).}
+region. Should be positive. Default is 1000 (1kb downstream).}
 
 \item{downstream}{Integer. Maximum distance downstream of gene end to
 consider for "Downstream" annotation. Default is 10000 (10kb).}

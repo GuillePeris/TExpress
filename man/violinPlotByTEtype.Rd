@@ -68,7 +68,7 @@ within a specific TE type, organized by a finer classification level.
 violinPlotByTEtype(res.TEs, TE_type = "LINE",
                    specific_type = "TE_family", nTop = 10) 
 
-#' violinPlotByTEtype(res.TEs, TE_type = "LINE",
+violinPlotByTEtype(res.TEs, TE_type = "LINE",
                    specific_type = "TE_name", nTop = 10)
 }
 
