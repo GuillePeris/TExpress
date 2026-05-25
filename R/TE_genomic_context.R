@@ -3,14 +3,14 @@
 #' Annotates transposable element (TE) loci with their genomic context relative
 #' to protein-coding genes. Uses ChIPseeker to determine if TEs overlap
 #' promoters, exons, introns, UTRs, or intergenic regions. Assigns the nearest
-#' gene to intergenic TEs.
+#' gene to intergenic TEs. 
 #'
 #' @param df.TEs Data frame containing TE loci with genomic coordinates.
 #'   Must include columns: \code{seqnames}, \code{start}, \code{end}, and
 #'   \code{strand}. Typically the output from differential expression analysis.
 #' @param gene.TxDb A TxDb object containing gene/transcript annotations.
 #'   Can be created from GTF files using \code{GenomicFeatures::makeTxDbFromGFF}
-#'   or loaded from Bioconductor annotation packages.
+#'   or loaded from Bioconductor annotation packages. 
 #' @param gene_names Data frame mapping gene IDs to gene names. Must contain
 #'   columns: \code{gene_id} (matching IDs in TxDb) and \code{gene_name}
 #'   (human-readable gene symbols). Used to add gene names to final output.
@@ -19,9 +19,9 @@
 #'   gene to intergenic TEs. Typically obtained by filtering a gene GTF for
 #'   entries where \code{type == "transcript"}.
 #' @param TSSminus Integer. Number of bases upstream of TSS to define promoter
-#'   region. Should be negative. Default is -5000 (5kb upstream).
+#'   region. Should be negative. Default is -1000 (1kb upstream).
 #' @param TSSplus Integer. Number of bases downstream of TSS to define promoter
-#'   region. Should be positive. Default is 5000 (5kb downstream).
+#'   region. Should be positive. Default is 1000 (1kb downstream).
 #' @param downstream Integer. Maximum distance downstream of gene end to
 #'   consider for "Downstream" annotation. Default is 10000 (10kb).
 #' @param is_ext_3UTR Boolean. TRUE if extended 3'UTR analysis is to be
