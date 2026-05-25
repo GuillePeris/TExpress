@@ -321,10 +321,14 @@ my.data <- downloadTestData(data_folder = "~/data/TExpress_test")
 
 ## Citation
 
-If you use TExpress in your research, please cite:
+If you use TExpress in your research, please cite it through zenodo DOI.
 
-Peris Guillermo, TExpress (2026). Github repository 
-[https://github.com/GuillePeris/TExpress](https://github.com/GuillePeris/TExpress).
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20382522.svg)](https://doi.org/10.5281/zenodo.20382522)
+
+Peris, Guillermo. TExpress: Tools for analyzing transposable element expression (2026). Zenodo. 
+[https://doi.org/10.5281/zenodo.20382522](https://doi.org/10.5281/zenodo.20382522).
+
+
 
 ---
 
