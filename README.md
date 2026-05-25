@@ -30,6 +30,8 @@ remotes::install_github("GuillePeris/TExpress",
                         dependencies = TRUE)
 ```
 
+Please, notice that there is an issue with *gghalves* packages that can be solved following [this link](https://github.com/erocoar/gghalves/issues/30#issuecomment-3351729804).
+
 ---
 
 ## Quick Start
