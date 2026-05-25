@@ -24,6 +24,7 @@
 #' @param device Character vector. File format(s) for output plots. Supported:
 #'   "svg", "eps", "png", "tiff", "jpeg". Can specify multiple formats.
 #'   Default is "png".
+#' @param gene_biotypes Character vector. Features with exons. Default is "protein_coding",
 #' @param plot.title Character string. Title for the region distribution plots.
 #'   If NULL (default), a generic title will be used.
 #' @param maxpadj Numeric. Adjusted p-value threshold for significance.
@@ -104,6 +105,7 @@ annotate_TE_regions <- function(TE_results,
                            gtf.format = "gtf",
                            output_folder = ".",
                            device = "png",
+                           gene_biotypes = "protein_coding",
                            plot.title = NULL,
                            maxpadj = 0.05,
                            minlfc = 1,
@@ -193,28 +195,37 @@ annotate_TE_regions <- function(TE_results,
     )
   }
   
-  # Filter to protein-coding genes
-  is_protein_coding_gene <- !is.na(gtf.genes$gene_biotype) &
-    gtf.genes$gene_biotype == "protein_coding"
-  gtf.genes <- gtf.genes[is_protein_coding_gene]
+  # Filter to protein-coding genes. Notice that there non-coding transcripts
+  #   of coding genes
+  # is_protein_coding_gene <- !is.na(gtf.genes$gene_biotype) &
+  #   gtf.genes$gene_biotype %in% gene_biotypes
+  #  gtf.genes <- gtf.genes[is_protein_coding_gene]
+  
+  filter_features <- 
+    (gtf.genes$type == "gene" & 
+       gtf.genes$gene_biotype %in% gene_biotypes ) |
+    (gtf.genes$type != "gene" &
+       gtf.genes$transcript_biotype %in% gene_biotypes ) 
+  gtf.genes <- gtf.genes[filter_features]
+  
   
   # Filter to protein-coding transcripts
-  is_protein_coding <- !is.na(gtf.genes$transcript_biotype) &
-    gtf.genes$transcript_biotype == "protein_coding"
+  # is_protein_coding <- !is.na(gtf.genes$transcript_biotype) &
+  #   gtf.genes$transcript_biotype %in%  gene_biotypes
+
+  # if (!any(is_protein_coding)) {
+  #   stop(
+  #     "No protein-coding transcripts found in GTF. ",
+  #     "Check that the GTF has 'transcript_biotype' column with ",
+  #     "'protein_coding' values.",
+  #     call. = FALSE
+  #   )
+  # }
   
-  if (!any(is_protein_coding)) {
-    stop(
-      "No protein-coding transcripts found in GTF. ",
-      "Check that the GTF has 'transcript_biotype' column with ",
-      "'protein_coding' values.",
-      call. = FALSE
-    )
-  }
-  
-  transcript.gr <- gtf.genes[is_protein_coding]   
+  # transcript.gr <- gtf.genes[is_protein_coding]   
   
   # Extract transcript features
-  is_transcript <- transcript.gr$type == "transcript"
+  is_transcript <- gtf.genes$type == "transcript"
   
   if (!any(is_transcript)) {
     stop(
@@ -224,7 +235,7 @@ annotate_TE_regions <- function(TE_results,
     )
   }
   
-  transcript.gr <- transcript.gr[is_transcript]  
+  transcript.gr <- gtf.genes[is_transcript]  
   
   end.time <- Sys.time()
   duration <- difftime(end.time, start.time, units = "secs")
@@ -272,7 +283,7 @@ annotate_TE_regions <- function(TE_results,
           dplyr::filter(
             .data$type == "gene",
             !is.na(.data$gene_biotype),
-            .data$gene_biotype == "protein_coding"
+            .data$gene_biotype %in% gene_biotypes   
           ) %>%
           dplyr::select(.data$gene_id, .data$gene_name) %>%
           unique()
