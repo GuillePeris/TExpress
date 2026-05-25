@@ -1,13 +1,14 @@
 Package: TExpress
-Title: What the Package Does (One Line, Title Case)
+Title:  Tools for analyzing transposable element (TE) expression
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+    person("Guillermo", "Peris", , "peris@uji.es", role = c("aut", "cre"))
+Description: Comprehensive tools for analyzing transposable element (TE) expression, 
+             genomic annotation, and transcriptional classification.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
+RoxygenNote: 8.0.0
 Imports: 
     BiocGenerics,
     ChIPseeker,
