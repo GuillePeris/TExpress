@@ -25,9 +25,7 @@ if (!requireNamespace("remotes", quietly = TRUE)) {
 }
 
 # Install TExpress
-remotes::install_github("GuillePeris/TExpress", 
-                        upgrade = "never",
-                        dependencies = TRUE)
+remotes::install_github("GuillePeris/TExpress") 
 ```
 
 Please, notice that there is an issue with *gghalves* packages that can be solved following [this link](https://github.com/erocoar/gghalves/issues/30#issuecomment-3351729804).
