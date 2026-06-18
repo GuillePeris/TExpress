@@ -1,13 +1,20 @@
 Package: TExpress
-Title: Tools for analyzing transposable element (TE) expression
+Title: Tools for Analyzing Transposable Element (TE) Expression
 Version: 1.0
-Authors@R: 
-    person("Guillermo", "Peris", , "peris@uji.es", 
+Authors@R:
+    person("Guillermo", "Peris", , "peris@uji.es",
     role = c("aut", "cre"),
     comment = c(ORCID = "0000-0003-2010-7844"))
-Description: Comprehensive tools for analyzing transposable element (TE) expression, 
-             genomic annotation, and transcriptional classification from TElocal analysis.
+Description: Provides a complete workflow for the downstream analysis of
+    transposable element (TE) expression from TElocal count tables. The package
+    performs differential expression analysis with DESeq2, annotates TEs by their
+    genomic context relative to protein-coding genes, and classifies them as
+    self-expressed or gene-dependent, together with publication-ready plots.
 License: MIT + file LICENSE
+URL: https://github.com/GuillePeris/TExpress
+BugReports: https://github.com/GuillePeris/TExpress/issues
+Depends:
+    R (>= 4.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
@@ -32,7 +39,7 @@ Imports:
     stringr,
     SummarizedExperiment,
     tibble
-Suggests: 
+Suggests:
     downloader,
     knitr,
     rmarkdown,
@@ -42,5 +49,5 @@ Suggests:
     IRanges,
     S4Vectors,
     testthat (>= 3.0.0)
-VignetteBuilder: knitr
 Config/testthat/edition: 3
+VignetteBuilder: knitr
