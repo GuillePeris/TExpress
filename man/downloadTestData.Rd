@@ -48,8 +48,8 @@ ZIP file is automatically extracted and the archive is removed after extraction.
 
 The following files will be created in the specified folder:
 \itemize{
-\item \code{Homo_sapiens.GRCh38.115.chr1.gtf} - Gene annotations
-\item \code{hg38_rmsk_TE_chr1.gtf} - TE annotations
+\item \code{Homo_sapiens.GRCh38.115.chr22.gtf} - Gene annotations
+\item \code{hg38_rmsk_TE_chr22.gtf} - TE annotations
 \item \code{*.cntTable} - Multiple count files (extracted from ZIP)
 \item \code{data.csv} - csv file including info on count files
 }
