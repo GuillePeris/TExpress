@@ -75,18 +75,35 @@ read_metadata <- function(datafile) {
          " columns, but has ", ncol(metadata), ".")
   }
   
+  # Columns are interpreted by position (File, Sample, Group, Condition).
+  colnames(metadata) <- expected_cols
+  
   # Validate Condition column
   unique_conditions <- unique(metadata$Condition)
   required_conditions <- c("Control", "Treat")
   
-  if (!all(required_conditions %in% unique_conditions)) {
+  if (!setequal(unique_conditions, required_conditions)) {
     stop(
-      "The 'Condition' column must contain 'Control' and 'Treat'.\nFound: ",
+      "The 'Condition' column must contain only 'Control' and 'Treat'.\nFound: ",
       paste(unique_conditions, collapse = ", "),
       call. = FALSE
     )
   }
   
-  colnames(metadata) <- expected_cols
+  # Reject duplicate sample or file identifiers.
+  for (col in c("Sample", "File")) {
+    dups <- unique(metadata[[col]][duplicated(metadata[[col]])])
+    if (length(dups) > 0) {
+      stop(
+        "The '", col, "' column must not contain duplicates.\nDuplicated: ",
+        paste(dups, collapse = ", "),
+        call. = FALSE
+      )
+    }
+  }
+  
+  # Set Condition as a factor with 'Control' as the reference level.
+  metadata$Condition <- factor(metadata$Condition, levels = required_conditions)
+  
   metadata
 }
