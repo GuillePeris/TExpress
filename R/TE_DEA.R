@@ -244,7 +244,7 @@ TE_DEA <- function(metafile,
   
   # Recombine TEs and genes
   countData <- rbind(countData.TEs %>% 
-                       dplyr::select(metadata$Sample), 
+                       dplyr::select(dplyr::all_of(metadata$Sample)), 
                      countData.genes)
   
   end.time <- Sys.time()
@@ -311,13 +311,13 @@ TE_DEA <- function(metafile,
   # Separate gene and TE normalized counts 
   # Separate normalized counts
   has_colon_norm <- stringr::str_detect(rownames(norm.counts), ":")
-  gene.count <- norm.counts[!has_colon_norm, ]
-  TE.count <- norm.counts[has_colon_norm, ]
+  gene.count <- norm.counts[!has_colon_norm, , drop = FALSE]
+  TE.count <- norm.counts[has_colon_norm, , drop = FALSE]
   
   # Separate DESeq2 results
   has_colon_res <- stringr::str_detect(rownames(res), ":")
-  res.genes <- res[!has_colon_res, ]
-  res.TEs <- res[has_colon_res, ]
+  res.genes <- res[!has_colon_res, , drop = FALSE]
+  res.TEs <- res[has_colon_res, , drop = FALSE]
 
   # Add TE metadata columns
   TE.count <- tryCatch(

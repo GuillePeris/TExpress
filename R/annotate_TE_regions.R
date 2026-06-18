@@ -285,7 +285,7 @@ annotate_TE_regions <- function(TE_results,
             !is.na(.data$gene_biotype),
             .data$gene_biotype %in% gene_biotypes   
           ) %>%
-          dplyr::select(.data$gene_id, .data$gene_name) %>%
+          dplyr::select("gene_id", "gene_name") %>%
           unique()
       },
       error = function(e) {

@@ -82,12 +82,12 @@ TE_coords <- function(countData.TEs, TE_annot.df) {
   
   # Add coordinates from gtf.TE. Gtf must have column 'transcript_id'
   countData.TEs <- dplyr::left_join(countData.TEs, dplyr::select(TE_annot.df, 
-                                                                 .data$seqnames, 
-                                                                 .data$start, 
-                                                                 .data$end, 
-                                                                 .data$strand, 
-                                                                 .data$transcript_id), 
-                  by= c("TE_element" = "transcript_id") ) #dplyr::join_by(TE_element == transcript_id))
+                                                                 "seqnames", 
+                                                                 "start", 
+                                                                 "end", 
+                                                                 "strand", 
+                                                                 "transcript_id"), 
+                  by= c("TE_element" = "transcript_id") ) 
   rownames(countData.TEs) <- res.rownames
   countData.TEs
 }
@@ -100,11 +100,11 @@ addTEColumns <- function(df, TE.coordinates) {
   
   df <- cbind(df, tmp)
   df <- dplyr::left_join(df, dplyr::select(TE.coordinates, 
-                                           .data$seqnames, 
-                                           .data$start, 
-                                           .data$end, 
-                                           .data$strand, 
-                                           .data$TE_element), 
+                                           "seqnames", 
+                                           "start", 
+                                           "end", 
+                                           "strand", 
+                                           "TE_element"), 
                          by="TE_element")
   rownames(df) <- df.rownames
   df

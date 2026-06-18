@@ -193,7 +193,7 @@ violinPlotByTEtype <- function(res.TEs,
   allLevels <- df %>% 
     dplyr::group_by(.data[[column]]) %>% 
     dplyr::distinct(.data[[column]]) %>% 
-    dplyr::pull(.data[[column]])
+    dplyr::pull(dplyr::all_of(column))
   upLevels <- df %>% 
     dplyr::group_by(.data[[column]]) %>%  
     dplyr::filter(expression %in% order) %>% 
@@ -261,12 +261,12 @@ violinPlotByTEtype <- function(res.TEs,
 #' @noRd
 .filter_by_te_list <- function(res.TEs, TE_list, broad_type, min.N) {
   res.TEs %>%
-    dplyr::select(.data$log2FoldChange,
-                  .data$padj,
-                  .data$TE_element,
-                  .data$TE_name,
-                  .data$TE_family,
-                  .data$TE_class) %>%
+    dplyr::select("log2FoldChange",
+                  "padj", 
+                  "TE_element",
+                  "TE_name",
+                  "TE_family",
+                  "TE_class") %>%
     dplyr::filter(.data[[broad_type]] %in% TE_list) %>%
     dplyr::group_by(.data[[broad_type]]) %>%
     dplyr::filter(dplyr::n() >= min.N) %>%
@@ -278,12 +278,12 @@ violinPlotByTEtype <- function(res.TEs,
 #' @noRd
 .filter_by_te_type <- function(res.TEs, TE_type, broad_type, specific_type, min.N) {
   res.TEs %>%
-    dplyr::select(.data$log2FoldChange,
-                  .data$padj,
-                  .data$TE_element,
-                  .data$TE_name,
-                  .data$TE_family,
-                  .data$TE_class) %>%
+    dplyr::select("log2FoldChange",
+                  "padj", 
+                  "TE_element",
+                  "TE_name",
+                  "TE_family",
+                  "TE_class") %>%
     dplyr::filter(.data[[broad_type]] == TE_type) %>%
     dplyr::group_by(.data[[specific_type]]) %>%
     dplyr::filter(dplyr::n() >= min.N) %>%

@@ -371,10 +371,8 @@ graphTEregion <- function(TE_results,
           percent = .data$n / sum(.data$n) * 100,
           clon = category_name
         ) %>%
-        dplyr::rename(region = .data[[variable]]) %>%   # 
-        dplyr::select(.data$region, 
-                      .data$percent, 
-                      .data$clon)
+        dplyr::rename(region = dplyr::all_of(variable)) %>%    
+        dplyr::select("region", "percent", "clon") 
       
       as.data.frame(summary)
     },
