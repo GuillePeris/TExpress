@@ -171,7 +171,12 @@ gtfBothStrands <- function(gtf.file,
     }
   )
   
-  # Return invisible
-  invisible(NULL)
+  message(
+    "Antisense GTF written to '", gtf.out, "' (",
+    length(gtf.gr), " sense + ", length(gtf.gr.as), " antisense = ",
+    length(final.gtf.gr), " features)."
+  )
   
+  # Return path to the created file, invisibly
+  invisible(gtf.out)
   }
