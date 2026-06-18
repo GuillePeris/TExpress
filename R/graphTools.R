@@ -140,7 +140,7 @@ volcanoPlot <- function(res,
   }
   
   if (!all(c("log2FoldChange", "padj") %in% colnames(res))) {
-    stop("'res' must contain columns: 'log2FoldChange' y 'padj'")
+    stop("'res' must contain columns: 'log2FoldChange' and 'padj'")
   }
 
   # Compute -log10(padj)
