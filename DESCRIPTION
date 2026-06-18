@@ -1,12 +1,12 @@
 Package: TExpress
-Title:  Tools for analyzing transposable element (TE) expression
+Title: Tools for analyzing transposable element (TE) expression
 Version: 1.0
 Authors@R: 
     person("Guillermo", "Peris", , "peris@uji.es", 
     role = c("aut", "cre"),
     comment = c(ORCID = "0000-0003-2010-7844"))
 Description: Comprehensive tools for analyzing transposable element (TE) expression, 
-             genomic annotation, and transcriptional classification from TElocal analysis
+             genomic annotation, and transcriptional classification from TElocal analysis.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -38,5 +38,9 @@ Suggests:
     rmarkdown,
     apeglm,
     webr,
-    grDevices
+    grDevices,
+    IRanges,
+    S4Vectors,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3
