@@ -235,7 +235,24 @@ classify_TE_transcription <- function(TE_results,
   
   # Get expressed TEs and genes
   expressed.TEs <- .get_expressed_features(sample_groups, TE.count, minNormCounts)
-  expressed.genes <- .get_expressed_features(sample_groups, gene.count, minNormCounts)    
+  expressed.genes <- .get_expressed_features(sample_groups, gene.count, minNormCounts)  
+  
+  # Sanity check: gene IDs assigned to TEs must match the rownames of
+  # gene.count for gene-expression status to be meaningful. A complete
+  # mismatch usually signals inconsistent identifiers (e.g. Ensembl version
+  # suffixes on one side only), which would silently make every gene look
+  # non-expressed and misclassify intronic TEs as self-expressed.
+  gene_ids <- stats::na.omit(res.TEs$geneId)
+  if (length(gene_ids) > 0 && !any(gene_ids %in% rownames(gene.count))) {
+    warning(
+      "None of the gene IDs in 'res.TEs$geneId' match the rownames of ",
+      "'gene.count'. Gene-expression status cannot be determined, so intronic ",
+      "TEs may be misclassified as self-expressed. Check that gene identifiers ",
+      "are formatted consistently (e.g. Ensembl version suffixes).",
+      call. = FALSE
+    )
+  }
+  
   
   # ============================================================
   # Step 2: Classify TE transcription
