@@ -150,9 +150,12 @@ TE_genomic_context <- function(df.TEs,
   # ============================================================
   # Set ChIPseeker Options with Cleanup
   # ============================================================
-  options(ChIPseeker.downstreamDistance = downstream)
-  options(ChIPseeker.ignore_1st_exon = TRUE)
-  options(ChIPseeker.ignore_1st_intron = TRUE)
+  old_opts <- options(
+    ChIPseeker.downstreamDistance = downstream,
+    ChIPseeker.ignore_1st_exon = TRUE,
+    ChIPseeker.ignore_1st_intron = TRUE
+  )
+  on.exit(options(old_opts), add = TRUE)
   
   # ============================================================
   # Convert TEs to GRanges
