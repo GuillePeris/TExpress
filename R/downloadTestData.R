@@ -29,8 +29,8 @@
 #' @section Downloaded Files:
 #' The following files will be created in the specified folder:
 #' \itemize{
-#'   \item \code{Homo_sapiens.GRCh38.115.chr1.gtf} - Gene annotations
-#'   \item \code{hg38_rmsk_TE_chr1.gtf} - TE annotations
+#'   \item \code{Homo_sapiens.GRCh38.115.chr22.gtf} - Gene annotations
+#'   \item \code{hg38_rmsk_TE_chr22.gtf} - TE annotations
 #'   \item \code{*.cntTable} - Multiple count files (extracted from ZIP)
 #'   \item \code{data.csv} - csv file including info on count files
 #' }
@@ -96,8 +96,10 @@ downloadTestData <- function(folder = NULL,
     )
   }
   
-  # Set download timeout
-  options(timeout = timeout)
+  # Set download timeout (restored on exit so we don't leak it into the
+  # caller's session).
+  old_opts <- options(timeout = timeout)
+  on.exit(options(old_opts), add = TRUE)
   
   # ============================================================
   # Define Files to Download
@@ -107,13 +109,13 @@ downloadTestData <- function(folder = NULL,
     gene_gtf = list(
       filename = "Homo_sapiens.GRCh38.115_chr22.gtf",
       url = "https://www.dropbox.com/scl/fi/ehzjxyixfag0gvjbnnjsr/Homo_sapiens.GRCh38.115_chr22.gtf?rlkey=1x484mjw3xkzz58h2ibaeav7z&st=dl1yqy3x&dl=1",
-      description = "Gene annotations (Ensembl GRCh38.115, chr1)",
+      description = "Gene annotations (Ensembl GRCh38.115, chr22)",
       size_mb = "~78 MB"
     ),
     te_gtf = list(
       filename = "hg38_rmsk_TE_chr22.gtf",
       url = "https://www.dropbox.com/scl/fi/nyb0d8bexyq8zjy93vyt2/hg38_rmsk_TE_chr22.gtf?rlkey=6hdwa59zzpjwg26iwiuwq6amz&st=fw0rurph&dl=1",
-      description = "TE annotations (RepeatMasker hg38, chr1)",
+      description = "TE annotations (RepeatMasker hg38, chr22)",
       size_mb = "~10 MB"
     ),
     count_data = list(
@@ -133,7 +135,7 @@ downloadTestData <- function(folder = NULL,
   for (file_info in files_to_download) {
     dest_file <- file.path(target_dir, file_info$filename)
     
-    download_success <- tryCatch(
+    tryCatch(
       {
         downloader::download(
           file_info$url,
