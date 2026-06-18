@@ -47,7 +47,6 @@ filter_GTF <- function(gtf.genes.file,
   
   # Export gtf file
   base_name <- tools::file_path_sans_ext(gtf.genes.file)
-  extension <- tools::file_ext(gtf.genes.file)
   output <- paste0(base_name, "_", suffix, ".", format.out)
   tryCatch(
     rtracklayer::export(gtf.genes, output, format = format.out),
