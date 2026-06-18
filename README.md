@@ -42,13 +42,13 @@ library(TExpress)
 my.data <- downloadTestData()
 
 # Run differential expression analysis
-TE_results_DEA <- TE_DEA(
-  metafile = my.data$metafile,
-  folder = my.data$folder,
-  gtf.TE.file = my.data$gtf.TE.file,
-  output = "results",
-  plot.title = "My Analysis"
-)
+# TE_results_DEA <- TE_DEA(
+#   metafile = my.data$metafile,
+#   folder = my.data$folder,
+#   gtf.TE.file = my.data$gtf.TE.file,
+#   output = "results",
+#   plot.title = "My Analysis"
+# )
 
 # Annotate TEs with genomic context
 TE_results_annot <- annotate_TE_regions(
@@ -84,7 +84,7 @@ filter_GTF(gtf.genes.file,
            features = c("protein_coding"),
            format.in = "gtf",
            format.out = "gtf",
-           suffix = "filtered") {
+           suffix = "filtered") 
 ```
 
 ### 2. Metadata File
@@ -138,7 +138,7 @@ gtf.TE.file <- my.data$gtf.TE.file  # TE annotation GTF
 output <- "results"                 # Output directory
 maxpadj <- 0.05                     # Adjusted p-value threshold
 minlfc <- 1                         # Log2 fold change threshold (2-fold)
-device <- c("pdf", "png")           # Output formats for plots
+device <- c("png", "svg")           # Output formats for plots
 plot.title <- "DGCR8-KO vs WT"      # Title for plots
 
 # Run differential expression analysis
@@ -247,11 +247,11 @@ violinPlotByTEList(
 
 Annotate TEs with their genomic location relative to protein-coding genes.
 ```r
-TE_results <- TE_regionAnnot(
+TE_results <- annotate_TE_regions(
   TE_results = TE_results,
   gtf.genes.file = my.data$gtf.gene.file,
   output_folder = output,
-  device = c("pdf", "png"),
+  device = c("png", "svg"),
   plot.title = plot.title,
   minCounts = 10  # Minimum normalized counts for inclusion
 )
@@ -305,7 +305,7 @@ The package includes a test dataset from chromosome 22:
 my.data <- downloadTestData()
 
 # Or specify custom location
-my.data <- downloadTestData(data_folder = "~/data/TExpress_test")
+my.data <- downloadTestData(folder = "~/data/TExpress_test")
 ```
 
 **Dataset details:**
@@ -313,7 +313,7 @@ my.data <- downloadTestData(data_folder = "~/data/TExpress_test")
 - **Comparison**: DGCR8-KO vs. WT
 - **Organism**: Human (hg38)
 - **Chromosome**: chr22 only (for quick testing)
-- **Replicates**: 4 per condition
+- **Replicates**: 4  per condition
 - **Reference**: [GSE197472](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE197472)
 
 ---
