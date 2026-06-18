@@ -1,0 +1,167 @@
+---
+title: "Analyzing transposable element expression with TExpress"
+author: "Guillermo Peris"
+date: "`r format(Sys.Date(), '%m/%d/%Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Analyzing transposable element expression with TExpress}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+**TExpress** is an R package for the downstream analysis of transposable
+element (TE) expression from quantification tools such as
+[TElocal](https://github.com/mhammell-laboratory/TElocal) (part of the
+*TEtranscripts* suite). In addition to performing differential expression
+analysis with *DESeq2*, **TExpress** annotates TEs with respect to genomic
+features and classifies their expression as originating either from the TE's
+own promoter (*self-expressed*) or from an external promoter, typically a
+nearby gene (*gene-dependent*).
+
+The analysis is organized as a three-stage pipeline, where each stage consumes
+and extends a single result list:
+
+1. `TE_DEA()` — reads the metadata and count tables, runs DESeq2, and returns
+   a list with `res.TEs`, `TE.count`, `gene.count`, and `metadata`.
+2. `annotate_TE_regions()` — adds genomic-context annotation
+   (Promoter / Exon / Intron / ...) relative to a gene GTF.
+3. `classify_TE_transcription()` — labels each TE as self-expressed or
+   gene-dependent.
+
+```{r overview, echo = FALSE, out.width = "100%", fig.cap = "TExpress pipeline overview: the output of each stage is the input of the next."}
+knitr::include_graphics("../man/figures/pipeline_overview.png")
+```
+
+```{r setup, eval = FALSE}
+library(TExpress)
+```
+
+# Two conventions to know
+
+## The colon-separated TE identifier
+
+TE features are identified by a colon-separated, four-level hierarchy used as
+the row name of every TE table:
+
+```
+TE_element : TE_name : TE_family : TE_class
+e.g.  L1PA2_dup501 : L1PA2 : L1 : LINE
+```
+
+The presence of `:` in a feature's row name is how **TExpress** distinguishes
+TEs from genes throughout the package, so this format must be preserved.
+
+## The Control / Treat metadata
+
+The metadata table must contain a `Condition` column with exactly the values
+`"Control"` and `"Treat"` (case-sensitive). `TExpress` uses `Control` as the
+reference level, so every reported contrast is **Treat vs. Control**. A minimal
+metadata file is a tab-separated table with four columns: `File`, `Sample`,
+`Group`, and `Condition`.
+
+# Standard workflow
+
+The chunks below are not evaluated when the vignette is built (they require the
+Bioconductor stack and a ~90 MB download), but they show a complete, runnable
+analysis.
+
+## Getting example data
+
+`downloadTestData()` fetches a small chr22 example dataset (gene GTF, TE GTF,
+and count tables) and returns the paths needed by the pipeline.
+
+```{r download, eval = FALSE}
+my.data <- downloadTestData()
+
+str(my.data)
+#> List of 4
+#>  $ metafile     : chr ".../data.csv"
+#>  $ folder       : chr "..."
+#>  $ gtf.gene.file: chr ".../Homo_sapiens.GRCh38.115_chr22.gtf"
+#>  $ gtf.TE.file  : chr ".../hg38_rmsk_TE_chr22.gtf"
+```
+
+## Step 1: Differential expression analysis
+
+`TE_DEA()` reads the metadata and counts, imports the TE GTF, and runs DESeq2,
+writing volcano/MA plots and result tables to `output`.
+
+```{r dea, eval = FALSE}
+TE_results <- TE_DEA(
+  metafile    = my.data$metafile,
+  folder      = my.data$folder,
+  gtf.TE.file = my.data$gtf.TE.file,
+  output      = "results",
+  maxpadj     = 0.05,
+  minlfc      = 1,
+  device      = c("png", "svg"),
+  plot.title  = "DGCR8-KO vs WT"
+)
+```
+
+The returned object is a list carrying the result data frames and counts that
+the following stages extend.
+
+## Step 2: Genomic-context annotation
+
+`annotate_TE_regions()` assigns each TE to a genomic region (Promoter, 5' UTR,
+Exon, Intron, 3' UTR, Downstream, or Intergenic) relative to the supplied gene
+annotation, and produces stacked bar plots of the region and TE-class
+distributions.
+
+```{r annotate, eval = FALSE}
+TE_results <- annotate_TE_regions(
+  TE_results    = TE_results,
+  gtf.genes.file = my.data$gtf.gene.file,
+  output_folder = "results",
+  device        = c("png", "svg"),
+  minCounts     = 10
+)
+```
+
+## Step 3: Transcriptional classification
+
+Finally, `classify_TE_transcription()` labels expressed TEs as *self-expressed*
+(transcribed from their own internal promoter) or *gene-dependent* (transcribed
+as part of host-gene transcription). The `save` argument selects which set of
+TEs to analyze: `"all"`, `"up"`, `"down"`, or `"dys"` (up + down).
+
+```{r classify, eval = FALSE}
+TE_results <- classify_TE_transcription(
+  TE_results    = TE_results,
+  output_folder = "results",
+  plot.title    = "DGCR8-KO vs WT",
+  save          = "dys"
+)
+```
+
+# Restricting the gene annotation (optional)
+
+Reads overlapping both a gene feature and a TE on the same strand are assigned
+to the gene. To restrict the gene annotation to selected biotypes before
+running the pipeline, use `filter_GTF()`:
+
+```{r filter, eval = FALSE}
+filter_GTF(
+  "Homo_sapiens.GRCh38.115.gtf",
+  features   = c("protein_coding"),
+  format.in  = "gtf",
+  format.out = "gtf",
+  suffix     = "filtered"
+)
+```
+
+# Session information
+
+```{r session-info}
+sessionInfo()
+```

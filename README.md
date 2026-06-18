@@ -13,7 +13,21 @@ of transposable elements, including:
 - Visualization of TE expression patterns
 - Classification of TEs by transcriptional origin (self-expressed vs. gene-dependent)
 
-[Transposable Elements in Development and in Disease - Sara R. Heras lab](https://www.genyo.es/en/research/research-groups/transposable-elements-in-development-and-in-disease/)
+---
+
+## Pipeline
+
+**TExpress** is organized as a three-stage pipeline. Each function consumes and
+extends a single `TE_results` object, so the output of one stage is the input of
+the next:
+
+![TExpress pipeline overview](man/figures/pipeline_overview.png)
+
+`TE_DEA()` runs the differential expression analysis, `annotate_TE_regions()`
+adds genomic-context annotation, and `classify_TE_transcription()` labels each TE
+as self-expressed or gene-dependent. A detailed diagram showing the functions
+called inside each stage is available in
+[`man/figures/pipeline.svg`](man/figures/pipeline.svg).
 
 ---
 
@@ -42,13 +56,13 @@ library(TExpress)
 my.data <- downloadTestData()
 
 # Run differential expression analysis
-# TE_results_DEA <- TE_DEA(
-#   metafile = my.data$metafile,
-#   folder = my.data$folder,
-#   gtf.TE.file = my.data$gtf.TE.file,
-#   output = "results",
-#   plot.title = "My Analysis"
-# )
+TE_results_DEA <- TE_DEA(
+  metafile = my.data$metafile,
+  folder = my.data$folder,
+  gtf.TE.file = my.data$gtf.TE.file,
+  output = "results",
+  plot.title = "My Analysis"
+)
 
 # Annotate TEs with genomic context
 TE_results_annot <- annotate_TE_regions(
@@ -84,7 +98,7 @@ filter_GTF(gtf.genes.file,
            features = c("protein_coding"),
            format.in = "gtf",
            format.out = "gtf",
-           suffix = "filtered") 
+           suffix = "filtered")
 ```
 
 ### 2. Metadata File
@@ -313,7 +327,7 @@ my.data <- downloadTestData(folder = "~/data/TExpress_test")
 - **Comparison**: DGCR8-KO vs. WT
 - **Organism**: Human (hg38)
 - **Chromosome**: chr22 only (for quick testing)
-- **Replicates**: 4  per condition
+- **Replicates**: 4 per condition
 - **Reference**: [GSE197472](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE197472)
 
 ---
