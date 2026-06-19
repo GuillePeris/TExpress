@@ -5,13 +5,15 @@
 
 > Comprehensive tools for analyzing transposable element (TE) expression, genomic annotation, and transcriptional classification.
 
-**TExpress** provides a complete workflow for differential expression analysis 
+**TExpress** provides a complete workflow for differential expression analysis  
 of transposable elements, including:
 
 - Statistical analysis using DESeq2
 - Genomic context annotation relative to protein-coding genes
 - Visualization of TE expression patterns
 - Classification of TEs by transcriptional origin (self-expressed vs. gene-dependent)
+
+[Transposable Elements in Development and in Disease - Sara R. Heras lab](https://www.genyo.es/en/research/research-groups/transposable-elements-in-development-and-in-disease/)
 
 ---
 
@@ -73,8 +75,7 @@ TE_results_annot <- annotate_TE_regions(
 
 # Classify TEs as self-expressed or gene-dependent
 TE_results_classify <- classify_TE_transcription(TE_results_annot, 
-  output_folder = "results", 
-  save = "all")
+  output_folder = "results"),
 ```
 
 ---
@@ -87,11 +88,12 @@ TE_results_classify <- classify_TE_transcription(TE_results_annot,
 Follow *TElocal* reccomendations to run this software.
 
 Please, notice that you have to [download an pre-built TE annotation](https://www.dropbox.com/scl/fo/jdpgn6fl8ngd3th3zebap/AGsyeyn4HYp9OFwdlmvc4U0/TElocal/prebuilt_indices?rlkey=41oz6ppggy82uha5i3yo1rnlx&e=1&subfolder_nav_tracking=1&dl=0) to run *TElocal*.
-If you want to use your own TE annotation, follow instructions [here](https://github.com/mhammell-laboratory/TElocal/issues/18#issuecomment-988021620)
+If you want to use your own TE annotation, follow instructions [here](https://github.com/mhammell-laboratory/TElocal/issues/18#issuecomment-988021620).
 
-Also, you should be aware that all reads overlapping gene feature annotation and TE annotation in the same strand are assigned to genes.
+Also, you should be aware that all reads overlapping gene feature annotation and 
+TE annotation in the same strand are assigned to genes by *TElocal*.
 If you are interested in restricting you gene annotation to only some features (for example, protein_coding and lncRNA) you can use
-**TExpress** function *filterGTF*:
+**TExpress** function *filter_GTF*:
 ```r
 gtf.genes.file <- "Homo_sapiens.GRCh38.115.gtf"
 filter_GTF(gtf.genes.file, 
@@ -129,8 +131,9 @@ TElocal_KO4.cntTable	KO4	KO	Treat
 
 ### 3. Annotation Files
 
-- **TE GTF file**: TE annotation matching the one used by TElocal
-- **Gene GTF file**: Protein-coding gene annotations (e.g., from GENCODE or Ensembl)
+- **TE GTF file**: TE annotation matching the one used by *TElocal*.
+- **Gene GTF file**: Gene annotation file. It must be the same used for *TElocal* 
+         or an extended version including all features from *TElocal* gene annotation.
 
 ---
 
@@ -195,67 +198,6 @@ This hierarchy allows flexible visualization at different taxonomic levels.
 
 ---
 
-#### Violin Plots by TE Type
-
-Display expression distribution for top TEs within a specific type.
-
-**Example 1: Top LTR families**
-```r
-violinPlotByTEtype(
-  res.TEs = TE_results$res.TEs,
-  TE_type = "LTR",                 # TE class to analyze
-  specific_type = "TE_family",     # Grouping level
-  nTop = 10,                       # Show top 10 families
-  order = "up",                    # Order by upregulated count
-  minlfc = 1,
-  maxpadj = 0.05,
-  width = 14,
-  height = 7,
-  device = "png",
-  output_folder = paste0(output, "/TEs_DEA"),
-  plot.title = plot.title
-)
-```
-
-![LTR families violin plot](./docs/violinPlot_LTR_TE_family.png)
-
-**Example 2: Top LTR elements by name**
-```r
-violinPlotByTEtype(
-  res.TEs = TE_results$res.TEs,
-  TE_type = "LTR",
-  specific_type = "TE_name",       # More specific grouping
-  nTop = 10,
-  width = 10,
-  height = 7,
-  device = "png",
-  output_folder = paste0(output, "/TEs_DEA"),
-  plot.title = plot.title
-)
-```
-
-![LTR names violin plot](./docs/violinPlot_LTR_TE_name.png)
-
-#### Violin Plots for Custom TE Lists
-
-Compare expression across a custom list of TEs at the same hierarchical level.
-```r
-violinPlotByTEList(
-  res.TEs = TE_results$res.TEs,
-  TE_list = c("L1", "ERVK", "L2", "ERV1", "Alu", "SVA"),
-  minlfc = 1,
-  maxpadj = 0.05,
-  width = 7,
-  height = 7,
-  device = "png",
-  output_folder = paste0(output, "/TEs_DEA"),
-  plot.title = plot.title
-)
-```
-
-![Custom TE list violin plot](./docs/violinPlot_TE_family.png)
-
----
 
 ### Step 2: Genomic Context Annotation
 
@@ -281,12 +223,12 @@ TE_results <- annotate_TE_regions(
 
 **Genomic Regions Annotated:**
 
-- **Promoter**: Within 5kb upstream/downstream of TSS (configurable)
+- **Promoter**: Within 1000 bp (default) upstream/downstream of TSS
 - **5' UTR**: Five-prime untranslated region
 - **Exon**: Protein-coding exons
 - **Intron**: Intronic regions
 - **3' UTR**: Three-prime untranslated region
-- **Downstream**: Up to 10kb downstream of gene end
+- **Downstream**: Up to 10kb (default) downstream of gene end
 - **Intergenic**: Not associated with any gene feature
 
 ---
