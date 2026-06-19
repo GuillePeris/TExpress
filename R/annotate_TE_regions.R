@@ -36,6 +36,12 @@
 #' @param minCounts Numeric. Minimum total normalized counts threshold for 
 #'   considering a TE loci as expressed. Used for region distribution plots. 
 #'   Default is 10.
+#' @param TSSminus Integer. Number of bases upstream of TSS to define promoter
+#'   region. Should be negative. Default is -1000 (1kb upstream).
+#' @param TSSplus Integer. Number of bases downstream of TSS to define promoter
+#'   region. Should be positive. Default is 1000 (1kb downstream).
+#' @param downstream Integer. Maximum distance downstream of gene end to
+#'   consider for "Downstream" annotation. Default is 10000 (10kb).
 #' @param is_ext_3UTR Boolean. TRUE if extended 3'UTR analysis is to be
 #'        performed. Defaults to FALSE. To be implemented
 #' @param ext_3UTR_file Character string. Filename for 3'UTR analysis result,
@@ -112,6 +118,9 @@ annotate_TE_regions <- function(TE_results,
                            width = 10,
                            height = 7,
                            minCounts = 10,
+                           TSSminus = -1000,
+                           TSSplus = 1000,
+                           downstream = 10000, 
                            is_ext_3UTR = FALSE,
                            ext_3UTR_file = NULL) {
   
@@ -313,6 +322,9 @@ annotate_TE_regions <- function(TE_results,
                        gene.TxDb, 
                        gene_names, 
                        transcript.gr,
+                       TSSminus,
+                       TSSplus,
+                       downstream,
                        is_ext_3UTR = is_ext_3UTR,
                        ext_3UTR_file = ext_3UTR_file),
     error = function(e) {
@@ -329,6 +341,9 @@ annotate_TE_regions <- function(TE_results,
                        gene.TxDb, 
                        gene_names, 
                        transcript.gr,
+                       TSSminus,
+                       TSSplus,
+                       downstream,
                        is_ext_3UTR = is_ext_3UTR,
                        ext_3UTR_file = ext_3UTR_file),
     error = function(e) {

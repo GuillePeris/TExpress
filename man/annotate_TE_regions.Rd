@@ -17,6 +17,9 @@ annotate_TE_regions(
   width = 10,
   height = 7,
   minCounts = 10,
+  TSSminus = -1000,
+  TSSplus = 1000,
+  downstream = 10000,
   is_ext_3UTR = FALSE,
   ext_3UTR_file = NULL
 )
@@ -64,6 +67,15 @@ differential expression. Default is 1.}
 \item{minCounts}{Numeric. Minimum total normalized counts threshold for
 considering a TE loci as expressed. Used for region distribution plots.
 Default is 10.}
+
+\item{TSSminus}{Integer. Number of bases upstream of TSS to define promoter
+region. Should be negative. Default is -1000 (1kb upstream).}
+
+\item{TSSplus}{Integer. Number of bases downstream of TSS to define promoter
+region. Should be positive. Default is 1000 (1kb downstream).}
+
+\item{downstream}{Integer. Maximum distance downstream of gene end to
+consider for "Downstream" annotation. Default is 10000 (10kb).}
 
 \item{is_ext_3UTR}{Boolean. TRUE if extended 3'UTR analysis is to be
 performed. Defaults to FALSE. To be implemented}

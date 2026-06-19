@@ -9,9 +9,9 @@ TE_genomic_context(
   gene.TxDb,
   gene_names,
   transcript.gr,
-  TSSminus = -1000,
-  TSSplus = 1000,
-  downstream = 10000,
+  TSSminus,
+  TSSplus,
+  downstream,
   is_ext_3UTR = FALSE,
   ext_3UTR_file = NULL
 )
