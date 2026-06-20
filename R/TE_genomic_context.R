@@ -212,6 +212,9 @@ TE_genomic_context <- function(df.TEs,
   # ============================================================
   # Extended 3'UTR analysis
   if(is_ext_3UTR) {
+    stop("Extended 3'UTR analysis (is_ext_3UTR = TRUE) is not yet implemented.",
+         call. = FALSE)
+
     nontranscript_regions <- c("Intergenic", "Promoter", "Downstream")
     ext_3UTR <- rtracklayer::import(ext_3UTR_file, format="gtf")
       
@@ -287,7 +290,7 @@ TE_genomic_context <- function(df.TEs,
       geneLength = BiocGenerics::end(query) - BiocGenerics::start(query),
       geneStrand = as.character(BiocGenerics::strand(query)),
       geneId = GenomicRanges::mcols(query)$gene_id,
-      transcriptID = GenomicRanges::mcols(query)$transcript_id
+      transcriptId = GenomicRanges::mcols(query)$transcript_id
     )
   }
   
