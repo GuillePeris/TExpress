@@ -73,7 +73,7 @@
 #' 
 #' @importFrom rlang .data
 #'
-#' @return A list with three updated elements for downstream analysis:
+#' @return A list with four updated elements for downstream analysis:
 #' \describe{
 #'   \item{res.TEs}{Data frame of DESeq2 results with added genomic annotation
 #'     columns (annotation, geneChr, geneStart, geneEnd, geneId, gene_name, etc.)}
@@ -192,7 +192,7 @@ annotate_TE_regions <- function(TE_results,
   
   # Check required columns exist
   gtf_mcols <- GenomicRanges::mcols(gtf.genes)
-  required_gtf_cols <- c("type", "transcript_biotype")
+  required_gtf_cols <- c("type", "transcript_biotype", "gene_biotype")
   missing_gtf_cols <- setdiff(required_gtf_cols, colnames(gtf_mcols))
   
   if (length(missing_gtf_cols) > 0L) {
@@ -300,7 +300,6 @@ annotate_TE_regions <- function(TE_results,
       error = function(e) {
         stop(
           "Failed to extract gene names: ", e$message,
-          "\nProceeding without gene names.",
           call. = FALSE
         )
       }
