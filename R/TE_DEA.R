@@ -46,8 +46,10 @@
 #' }
 #'
 #' The function distinguishes TEs from genes by the presence of a colon (:) in
-#' the feature name, which is the standard format for TE loci identifiers
-#' (e.g., "L1Md_A:chr1:12345-12678:+").
+#' the feature name, which is the standard format for TElocal TE loci
+#' identifiers: \code{TE_element:TE_name:TE_family:TE_class}
+#' (e.g., "L1PA2_dup501:L1PA2:L1:LINE"). Gene identifiers contain no colon
+#' (e.g., "ENSMUSG00000000001").
 #'
 #' @section Output Structure:
 #' The function creates the following directory structure:
@@ -223,7 +225,7 @@ TE_DEA <- function(metafile,
   start.time <- Sys.time()
   
   # Separate TEs from genes based on presence of colon
-  # TE format: "L1Md_A:chr1:12345-12678:+"
+  # TE format:   "L1PA2_dup501:L1PA2:L1:LINE"  (TE_element:TE_name:TE_family:TE_class)
   # Gene format: "ENSMUSG00000000001"
   has_colon <- stringr::str_detect(rownames(countData), ":")
   
@@ -347,8 +349,8 @@ TE_DEA <- function(metafile,
   message("==> Saving results to files")
   start.time <- Sys.time()
   
-  output.genes <- paste0(output, "/genes_DEA")
-  output.TEs <- paste0(output, "/TEs_DEA")
+  output.genes <- file.path(output, "genes_DEA")
+  output.TEs <- file.path(output, "TEs_DEA")
 
   tryCatch(
     {
