@@ -1,4 +1,21 @@
-filter_GTF <- function(gtf.genes.file, 
+#' Filter a Gene GTF/GFF to Selected Biotypes
+#'
+#' Imports a gene annotation file, keeps only genes/transcripts whose
+#' \code{gene_biotype}/\code{transcript_biotype} is in \code{features}, and
+#' writes the filtered annotation back to disk with a suffix.
+#'
+#' @param gtf.genes.file Character string. Path to the gene GTF/GFF file.
+#' @param features Character vector. Biotypes to keep. Default
+#'   \code{c("protein_coding")}.
+#' @param format.in Character string. Input format. Default "gtf".
+#' @param format.out Character string. Output format. Default "gtf".
+#' @param suffix Character string. Suffix appended before the extension of the
+#'   output file. Default "filtered".
+#'
+#' @return Invisibly, nothing. Writes the filtered annotation to disk.
+#' @keywords internal
+#' @noRd
+filter_GTF <- function(gtf.genes.file,
                                features = c("protein_coding"),
                                format.in = "gtf",
                                format.out = "gtf",
