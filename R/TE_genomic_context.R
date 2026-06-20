@@ -363,7 +363,6 @@ TE_genomic_context <- function(df.TEs,
   df$annotation <- as.character(df$annotation)
   
   # Simplify to broad categories
-  # Order matters - more specific patterns first
   df$annotation[startsWith(df$annotation, "Promoter")] <- "Promoter"
   df$annotation[startsWith(df$annotation, "5' UTR")] <- "5' UTR"
   df$annotation[startsWith(df$annotation, "3' UTR")] <- "3' UTR"
