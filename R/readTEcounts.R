@@ -73,7 +73,7 @@ readTEcounts <- function(metadata, folder) {
   if (length(missing_files) > 0) {
     stop(
       "Missing count file(s):\n  ",
-      paste(names(missing_files), ": ", missing_files, collapse = "\n  "),
+      paste(missing_files, collapse = "\n  "),
       call. = FALSE
     )
   }
