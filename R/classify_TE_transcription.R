@@ -153,7 +153,7 @@ classify_TE_transcription <- function(TE_results,
   }
   
   # Check required elements
-  required_elements <- c("res.TEs", "TE.count", "metadata")
+  required_elements <- c("res.TEs", "TE.count", "gene.count", "metadata")
   missing_elements <- setdiff(required_elements, names(TE_results))
   
   if (length(missing_elements) > 0L) {
@@ -263,59 +263,65 @@ classify_TE_transcription <- function(TE_results,
   res.TEs$expression_type <- NA
   res.TEs$TE_expression <- NA
   
+  # Categories are applied in priority order (each only fills rows still NA):
+  #   Exon > Intron (expressed) > Antisense > Intron (not expressed) > nRT
+  # See the documented "Classification Hierarchy" in the function header.
+
   #    + Ex:        Exon (SS)
   index.ex <- is.na(res.TEs$TE_expression) &
               res.TEs$annotation %in% c("Exon", "3' UTR", "5' UTR") &
               res.TEs$strand == res.TEs$geneStrand
   if(any(index.ex)) {
-     res.TEs[index.ex, ]$TE_expression <- "dependent"
-     res.TEs[index.ex, ]$expression_type <- "Exon"
+     res.TEs$TE_expression[index.ex] <- "dependent"
+     res.TEs$expression_type[index.ex] <- "Exon"
   }
   #    + 3utr_ext:  Pervasive transcription (non-annotated 3' UTRs)
   # Notice we are not checking 3'UTR gene strand (not computed)
   index.3utr_ext <- is.na(res.TEs$TE_expression) &
                     res.TEs$annotation %in% c("3utr_ext")
   if(any(index.3utr_ext)) {
-    res.TEs[index.3utr_ext, ]$TE_expression <- "dependent"
-    res.TEs[index.3utr_ext, ]$expression_type <- "3UTR ext"
+    res.TEs$TE_expression[index.3utr_ext] <- "dependent"
+    res.TEs$expression_type[index.3utr_ext] <- "3UTR ext"
   }
-  
+
   #    + In_g:      Intron (SS) gene expression
-  index.in_g <- is.na(res.TEs$TE_expression) & 
-                res.TEs$annotation %in% c("Intron") & 
+  index.in_g <- is.na(res.TEs$TE_expression) &
+                res.TEs$annotation %in% c("Intron") &
                 res.TEs$geneId %in% expressed.genes &
                 res.TEs$strand == res.TEs$geneStrand
   if(any(index.in_g)) {
-    res.TEs[index.in_g, ]$TE_expression <- "dependent"
-    res.TEs[index.in_g, ]$expression_type <- "Intron expressed"
+    res.TEs$TE_expression[index.in_g] <- "dependent"
+    res.TEs$expression_type[index.in_g] <- "Intron expressed"
   }
-  
-  #    + In_ng:     Intron no gene expression
-  index.in_ng <- is.na(res.TEs$TE_expression) & 
-                 res.TEs$annotation %in% c("Intron") & 
-                 !(res.TEs$geneId %in% expressed.genes) &
-    res.TEs$strand == res.TEs$geneStrand
-  if(any(index.in_ng)) {
-    res.TEs[index.in_ng, ]$TE_expression <- "self"
-    res.TEs[index.in_ng, ]$expression_type <- "Intron no expressed"
-  }
-  
+
   #    + Antisense:     TE_strand != tx_strand
+  # Resolved before Intron (not expressed) to match the documented hierarchy:
+  # an antisense TE is gene-dependent even when it lies in a non-expressed gene.
   if(antisense) {
-    index.antisense <- is.na(res.TEs$TE_expression) & 
-                       endsWith(res.TEs$TE_element, antisense_suffix) 
-  
-    if(any(index.antisense)) {  
-      res.TEs[index.antisense, ]$TE_expression <- "dependent"
-      res.TEs[index.antisense, ]$expression_type <- "Antisense"
+    index.antisense <- is.na(res.TEs$TE_expression) &
+                       endsWith(res.TEs$TE_element, antisense_suffix)
+
+    if(any(index.antisense)) {
+      res.TEs$TE_expression[index.antisense] <- "dependent"
+      res.TEs$expression_type[index.antisense] <- "Antisense"
     }
   }
-  
-  #    + nRT:       Non read-through 
+
+  #    + In_ng:     Intron no gene expression
+  index.in_ng <- is.na(res.TEs$TE_expression) &
+                 res.TEs$annotation %in% c("Intron") &
+                 !(res.TEs$geneId %in% expressed.genes) &
+                 res.TEs$strand == res.TEs$geneStrand
+  if(any(index.in_ng)) {
+    res.TEs$TE_expression[index.in_ng] <- "self"
+    res.TEs$expression_type[index.in_ng] <- "Intron no expressed"
+  }
+
+  #    + nRT:       Non read-through
   index.nRT <- is.na(res.TEs$TE_expression)
   if(any(index.nRT)) {
-    res.TEs[index.nRT, ]$expression_type <- "nRT"
-    res.TEs[index.nRT, ]$TE_expression <- "self"
+    res.TEs$expression_type[index.nRT] <- "nRT"
+    res.TEs$TE_expression[index.nRT] <- "self"
   }
   
   res.TEs$expression_type <- factor(res.TEs$expression_type)
