@@ -287,7 +287,7 @@ TE_genomic_context <- function(df.TEs,
       geneChr = as.character(GenomicRanges::seqnames(query)),      
       geneStart = BiocGenerics::start(query),
       geneEnd = BiocGenerics::end(query),
-      geneLength = BiocGenerics::end(query) - BiocGenerics::start(query),
+      geneLength = BiocGenerics::end(query) - BiocGenerics::start(query) + 1L,
       geneStrand = as.character(BiocGenerics::strand(query)),
       geneId = GenomicRanges::mcols(query)$gene_id,
       transcriptId = GenomicRanges::mcols(query)$transcript_id
