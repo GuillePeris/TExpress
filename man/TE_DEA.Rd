@@ -86,8 +86,10 @@ The pipeline performs the following steps:
 }
 
 The function distinguishes TEs from genes by the presence of a colon (:) in
-the feature name, which is the standard format for TE loci identifiers
-(e.g., "L1Md_A:chr1:12345-12678:+").
+the feature name, which is the standard format for TElocal TE loci
+identifiers: \code{TE_element:TE_name:TE_family:TE_class}
+(e.g., "L1PA2_dup501:L1PA2:L1:LINE"). Gene identifiers contain no colon
+(e.g., "ENSMUSG00000000001").
 }
 \section{Output Structure}{
 
