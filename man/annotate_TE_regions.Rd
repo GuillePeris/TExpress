@@ -84,7 +84,7 @@ performed. Defaults to FALSE. To be implemented}
 in gff format. To be implemented.}
 }
 \value{
-A list with three updated elements for downstream analysis:
+A list with four updated elements for downstream analysis:
 \describe{
 \item{res.TEs}{Data frame of DESeq2 results with added genomic annotation
 columns (annotation, geneChr, geneStart, geneEnd, geneId, gene_name, etc.)}
