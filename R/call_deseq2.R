@@ -79,7 +79,9 @@ call_deseq2 <- function(countData, metadata, useCtrlGenes) {
   
   # Create coldata from metadata
   coldata <- metadata[, c("Sample", "Group", "Condition"), drop = FALSE]
-  
+  # Row names must match colnames(countData) for DESeq2 to align samples.
+  rownames(coldata) <- coldata$Sample
+
   # Ensure Condition is a factor with correct levels
   coldata$condition <- factor(metadata$Condition, levels = expected_levels)
 
