@@ -70,13 +70,20 @@ TE_coords <- function(countData.TEs, TE_annot.df) {
          call. = FALSE)
   }
   
-  # Split rownames
-  tmp <- tryCatch(
-    do.call(rbind, strsplit(res.rownames, ":", fixed = TRUE)),
-    error = function(e) {
-      stop("Failed to split rownames by ':'. ", e$message, call. = FALSE)
-    }
-  )
+  # Split rownames. Each must have exactly 4 colon-separated fields;
+  # otherwise do.call(rbind, ...) would silently recycle and misalign columns.
+  split_fields <- strsplit(res.rownames, ":", fixed = TRUE)
+  n_fields <- lengths(split_fields)
+  if (any(n_fields != 4L)) {
+    bad <- res.rownames[n_fields != 4L]
+    stop(
+      "'countData.TEs' rownames must have exactly 4 colon-separated fields ",
+      "(TE_element:TE_name:TE_family:TE_class). Offending example(s): ",
+      paste(utils::head(bad, 3L), collapse = ", "),
+      call. = FALSE
+    )
+  }
+  tmp <- do.call(rbind, split_fields)
   colnames(tmp) <- c("TE_element", "TE_name", "TE_family", "TE_class")
   countData.TEs <- cbind(countData.TEs, tmp)
   
@@ -95,7 +102,17 @@ TE_coords <- function(countData.TEs, TE_annot.df) {
 #' @importFrom rlang .data
 addTEColumns <- function(df, TE.coordinates) {
   df.rownames <- rownames(df)
-  tmp <- as.data.frame(do.call(rbind, strsplit(rownames(df), ":", fixed = TRUE)))
+  split_fields <- strsplit(df.rownames, ":", fixed = TRUE)
+  if (any(lengths(split_fields) != 4L)) {
+    bad <- df.rownames[lengths(split_fields) != 4L]
+    stop(
+      "'df' rownames must have exactly 4 colon-separated fields ",
+      "(TE_element:TE_name:TE_family:TE_class). Offending example(s): ",
+      paste(utils::head(bad, 3L), collapse = ", "),
+      call. = FALSE
+    )
+  }
+  tmp <- as.data.frame(do.call(rbind, split_fields))
   colnames(tmp) <- c("TE_element", "TE_name", "TE_family", "TE_class")
   
   df <- cbind(df, tmp)
