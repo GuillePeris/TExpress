@@ -1,0 +1,118 @@
+// TExpress operation flow — three main functions stacked top-to-bottom, each
+// with its calls flowing left-to-right. I/O files and folders sit OUTSIDE the
+// function boxes. Each stage reads inputs on the left and writes a result
+// folder on the right; the TE_results object sits between two stages, drawn
+// once as the OUTPUT of one function and the INPUT of the next.
+// Render:  dot -Tpdf man/figures/pipeline.dot -o pipeline.pdf
+//          dot -Tsvg man/figures/pipeline.dot -o pipeline.svg
+//          dot -Tpng -Gdpi=300 man/figures/pipeline.dot -o pipeline.png
+digraph TExpress {
+    rankdir=TB;
+    compound=true;
+    newrank=true;
+    nodesep=0.35;
+    ranksep=0.9;
+    fontname="Helvetica";
+    node  [fontname="Helvetica", fontsize=10];
+    edge  [fontname="Helvetica", fontsize=9, color="#555555"];
+
+    // ===================== I/O nodes (outside the boxes) =====================
+    node [shape=parallelogram, style=filled, fillcolor="#eef6ff", color="#4a90d9"];
+    GENEGTF [label="gene GTF"];
+    // the three TE_DEA inputs as one stacked node with a port per file
+    INPUTS1 [shape=plain, label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="4" CELLPADDING="6" COLOR="#4a90d9">
+          <TR><TD PORT="m" BGCOLOR="#eef6ff">metadata file<BR/>(data.csv)</TD></TR>
+          <TR><TD PORT="c" BGCOLOR="#eef6ff">TElocal counts<BR/>(*.cntTable)</TD></TR>
+          <TR><TD PORT="t" BGCOLOR="#eef6ff">TE GTF</TD></TR>
+        </TABLE>>];
+
+    node [shape=note, style=filled, fillcolor="#fff7e6", color="#d9a441"];
+    R1 [label="TE_results\nres.TEs | TE.count | gene.count | metadata"];
+    R2 [label="TE_results\n+ annotation, geneId, gene_name ..."];
+    R3 [label="TE_results\n+ expression_type, TE_expression"];
+
+    node [shape=cylinder, style=filled, fillcolor="#eafaef", color="#3fae6b"];
+    O1 [label="genes_DEA/ + TEs_DEA/\ntables, volcano/MA plots"];
+    O2 [label="TEs_annotated/\nannotated tables, region & class barplots"];
+    O3 [label="classify_TE/\nclassified table, pie & bar charts"];
+
+    // ============================ STAGE 1 ============================
+    subgraph cluster_dea {
+        label="TE_DEA( )  —  differential expression";
+        labeljust="l"; style="rounded"; color="#4a90d9"; fontsize=12;
+        node [shape=box, style="rounded,filled", fillcolor=white, color="#333333"];
+        RM  [label="read_metadata( )"];
+        RC  [label="readTEcounts( )"];
+        IG1 [label="importGTF( )"];
+        TC  [label="TE_coords( )"];
+        CD  [label="call_deseq2( )\n[DESeq2]"];
+        RD  [label="results_deseq2( )"];
+        NC  [label="norm_counts( )"];
+        ATC [label="addTEColumns( )"];
+        SV1 [label=".save_deseq2( )"];
+        G1  [label="graphTE_DEA( )\nvolcano + MA"];
+        RM -> RC -> IG1 -> TC -> CD -> RD -> NC -> ATC -> SV1 -> G1;
+    }
+
+    // ============================ STAGE 2 ============================
+    subgraph cluster_annot {
+        label="annotate_TE_regions( )  —  genomic context";
+        labeljust="l"; style="rounded"; color="#d9a441"; fontsize=12;
+        node [shape=box, style="rounded,filled", fillcolor=white, color="#333333"];
+        IG2  [label="importGTF( )"];
+        TXDB [label="makeTxDbFromGRanges( )"];
+        TGC  [label="TE_genomic_context( )\n[ChIPseeker]"];
+        SV2  [label=".save_deseq2( )"];
+        G2   [label="graphTEregion( )\nregion / class barplots"];
+        IG2 -> TXDB -> TGC -> SV2 -> G2;
+    }
+
+    // ============================ STAGE 3 ============================
+    subgraph cluster_class {
+        label="classify_TE_transcription( )  —  transcriptional origin";
+        labeljust="l"; style="rounded"; color="#3fae6b"; fontsize=12;
+        node [shape=box, style="rounded,filled", fillcolor=white, color="#333333"];
+        GEF [label=".get_expressed_features( )"];
+        CLS [label="rule-based labelling\nself vs gene-dependent"];
+        SV3 [label="write.table( )"];
+        G3  [label="graph_classify_TE( )\npie + bar charts"];
+        GEF -> CLS -> SV3 -> G3;
+    }
+
+    // ---- rank bands: inputs | function block | result folder (one row each) ----
+    { rank=same; INPUTS1; RM; RC; IG1; TC; CD; RD; NC; ATC; SV1; G1; O1; }
+    { rank=same; GENEGTF; IG2; TXDB; TGC; SV2; G2; O2; }
+    { rank=same; GEF; CLS; SV3; G3; O3; }
+    // ---- TE_results connectors live on their own rank between the bands ----
+    { rank=same; R1; }
+    { rank=same; R2; }
+
+    // ---- inputs -> functions (data; not used for ordering) ----
+    INPUTS1:m -> RM  [constraint=false];
+    INPUTS1:c -> RC  [constraint=false];
+    INPUTS1:t -> IG1 [constraint=false];
+    GENEGTF -> IG2 [constraint=false];
+
+    // ---- functions -> folder outputs (right of each box) ----
+    G1 -> O1;
+    G2 -> O2;
+    G3 -> O3;
+
+    // ---- left-to-right ordering inside each band ----
+    INPUTS1 -> RM [style=invis, weight=20];   // stacked inputs at the far left
+    GENEGTF -> IG2 [style=invis, weight=20];
+
+    // ---- TE_results: output of one stage = input of the next (vertical flow) ----
+    G1 -> R1 [color="#d9a441", xlabel=" output"];
+    R1 -> IG2 [color="#d9a441", xlabel=" input"];
+    G2 -> R2 [color="#3fae6b", xlabel=" output"];
+    R2 -> GEF [color="#3fae6b", xlabel=" input"];
+    G3 -> R3 [color="#3fae6b", xlabel=" output"];   // final returned object
+
+    // ---- keep the stages left-aligned (vertical rails on first + last nodes) ----
+    RM -> IG2 [style=invis, weight=100];
+    IG2 -> GEF [style=invis, weight=100];
+    O1 -> O2 [style=invis, weight=100];
+    O2 -> O3 [style=invis, weight=100];
+}

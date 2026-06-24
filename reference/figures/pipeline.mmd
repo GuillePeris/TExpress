@@ -1,0 +1,78 @@
+%% TExpress operation flow: the three main functions, their internal calls,
+%% and their inputs/outputs. Render at https://mermaid.live (export SVG/PNG)
+%% or view directly on GitHub.
+flowchart TB
+    %% ---------- external inputs ----------
+    META[/"metadata file<br/>(data.csv)"/]
+    COUNTS[/"TElocal count files<br/>(*.cntTable)"/]
+    TEGTF[/"TE GTF"/]
+    GENEGTF[/"gene GTF"/]
+
+    %% ================= STAGE 1 =================
+    subgraph S1["TE_DEA( ) — differential expression"]
+        direction LR
+        RM["read_metadata( )"] --> RC["readTEcounts( )"]
+        RC --> IG1["importGTF( )"]
+        IG1 --> TC["TE_coords( )"]
+        TC --> CD["call_deseq2( )<br/><i>DESeq2</i>"]
+        CD --> RD["results_deseq2( )"]
+        RD --> NC["norm_counts( )"]
+        NC --> ATC["addTEColumns( )"]
+        ATC --> SV1[".save_deseq2( )"]
+        SV1 --> G1["graphTE_DEA( )<br/><i>volcano + MA</i>"]
+    end
+
+    %% ================= STAGE 2 =================
+    subgraph S2["annotate_TE_regions( ) — genomic context"]
+        direction LR
+        IG2["importGTF( )"] --> TXDB["makeTxDbFromGRanges( )"]
+        TXDB --> TGC["TE_genomic_context( )<br/><i>ChIPseeker annotatePeak</i>"]
+        TGC --> SV2[".save_deseq2( )"]
+        SV2 --> G2["graphTEregion( )<br/><i>region / class barplots</i>"]
+    end
+
+    %% ================= STAGE 3 =================
+    subgraph S3["classify_TE_transcription( ) — transcriptional origin"]
+        direction LR
+        GEF[".get_expressed_features( )"] --> CLS["rule-based labelling<br/>self vs gene-dependent"]
+        CLS --> SV3["write.table( )"]
+        SV3 --> G3["graph_classify_TE( )<br/><i>pie + bar charts</i>"]
+    end
+
+    %% ---------- returned objects ----------
+    R1[["TE_results<br/>res.TEs · TE.count · gene.count · metadata"]]
+    R2[["TE_results<br/>+ annotation, geneId, gene_name ..."]]
+    R3[["TE_results<br/>+ expression_type, TE_expression"]]
+
+    %% ---------- file outputs ----------
+    O1[("genes_DEA/ + TEs_DEA/<br/>result tables · volcano/MA plots")]
+    O2[("TEs_annotated/<br/>annotated tables · region & class barplots")]
+    O3[("classify_TE/<br/>classified table · pie & bar charts")]
+
+    %% ---------- wiring: inputs into stage 1 ----------
+    META --> RM
+    COUNTS --> RC
+    TEGTF --> IG1
+
+    %% ---------- stage outputs ----------
+    G1 --> R1
+    G1 --> O1
+
+    %% ---------- stage 1 -> stage 2 ----------
+    R1 --> S2
+    GENEGTF --> IG2
+    G2 --> R2
+    G2 --> O2
+
+    %% ---------- stage 2 -> stage 3 ----------
+    R2 --> S3
+    G3 --> R3
+    G3 --> O3
+
+    %% ---------- styling ----------
+    classDef input fill:#eef6ff,stroke:#4a90d9,color:#11385f;
+    classDef result fill:#fff7e6,stroke:#d9a441,color:#6b4e12;
+    classDef output fill:#eafaef,stroke:#3fae6b,color:#13502c;
+    class META,COUNTS,TEGTF,GENEGTF input;
+    class R1,R2,R3 result;
+    class O1,O2,O3 output;

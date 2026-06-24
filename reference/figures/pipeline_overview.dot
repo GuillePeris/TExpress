@@ -1,0 +1,58 @@
+// TExpress high-level overview — the three main functions only (no internal
+// calls), with inputs and outputs, flowing left to right.
+// Render:  dot -Tpdf man/figures/pipeline_overview.dot -o pipeline_overview.pdf
+//          dot -Tsvg man/figures/pipeline_overview.dot -o pipeline_overview.svg
+//          dot -Tpng -Gdpi=300 man/figures/pipeline_overview.dot -o pipeline_overview.png
+digraph TExpressOverview {
+    rankdir=LR;
+    nodesep=0.45;
+    ranksep=0.9;
+    fontname="Helvetica";
+    node  [fontname="Helvetica", fontsize=11];
+    edge  [fontname="Helvetica", fontsize=10, color="#555555"];
+
+    // ----------------------------- inputs -----------------------------
+    // three TE_DEA inputs stacked as one node, one cell per file
+    INPUTS1 [shape=plain, label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="4" CELLPADDING="6" COLOR="#4a90d9">
+          <TR><TD BGCOLOR="#eef6ff">metadata file (data.csv)</TD></TR>
+          <TR><TD BGCOLOR="#eef6ff">TElocal counts (*.cntTable)</TD></TR>
+          <TR><TD BGCOLOR="#eef6ff">TE GTF</TD></TR>
+        </TABLE>>];
+    GENEGTF [shape=parallelogram, style=filled, fillcolor="#eef6ff",
+             color="#4a90d9", label="gene GTF"];
+
+    // ------------------------ main functions --------------------------
+    node [shape=box, style="rounded,filled", penwidth=2, margin="0.25,0.18"];
+    DEA [label="TE_DEA( )\ndifferential expression",
+         fillcolor="#dbe9fb", color="#4a90d9"];
+    ANN [label="annotate_TE_regions( )\ngenomic context",
+         fillcolor="#fdf0d5", color="#d9a441"];
+    CLS [label="classify_TE_transcription( )\ntranscriptional origin",
+         fillcolor="#e2f5e9", color="#3fae6b"];
+
+    // ------------------------- outputs --------------------------------
+    node [shape=cylinder, style=filled, penwidth=1, margin="0.11,0.055"];
+    O1 [fillcolor="#eafaef", color="#3fae6b", label="genes_DEA/ + TEs_DEA/"];
+    O2 [fillcolor="#eafaef", color="#3fae6b", label="TEs_annotated/"];
+    O3 [fillcolor="#eafaef", color="#3fae6b", label="classify_TE/"];
+    R3 [shape=note, fillcolor="#fff7e6", color="#d9a441",
+        label="TE_results\n(final object)"];
+
+    // -------------------- left-to-right main flow ---------------------
+    INPUTS1 -> DEA;
+    DEA -> ANN [label="TE_results"];
+    ANN -> CLS [label="TE_results"];
+    CLS -> R3  [label="TE_results"];
+
+    // -------------- secondary input / folder outputs ------------------
+    GENEGTF -> ANN;
+    DEA -> O1;
+    ANN -> O2;
+    CLS -> O3;
+
+    // place the folder output below each function, gene GTF above annotate
+    { rank=same; DEA; O1; }
+    { rank=same; GENEGTF; ANN; O2; }
+    { rank=same; CLS; O3; }
+}
