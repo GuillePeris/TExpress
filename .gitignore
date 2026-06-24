@@ -8,3 +8,4 @@ inst/doc
 R/filter_TE_annot.R
 tools/make_vignette_figures.R
 tools
+docs

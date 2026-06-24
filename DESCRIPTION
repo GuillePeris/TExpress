@@ -11,7 +11,7 @@ Description: Provides a complete workflow for the downstream analysis of
     genomic context relative to protein-coding genes, and classifies them as
     self-expressed or gene-dependent, together with publication-ready plots.
 License: MIT + file LICENSE
-URL: https://github.com/GuillePeris/TExpress
+URL: https://github.com/GuillePeris/TExpress, https://guilleperis.github.io/TExpress/
 BugReports: https://github.com/GuillePeris/TExpress/issues
 Depends:
     R (>= 4.0)
