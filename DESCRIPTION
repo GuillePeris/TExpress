@@ -49,5 +49,6 @@ Suggests:
     IRanges,
     S4Vectors,
     testthat (>= 3.0.0)
+Remotes: erocoar/gghalves
 Config/testthat/edition: 3
 VignetteBuilder: knitr
