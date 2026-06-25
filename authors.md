@@ -17,6 +17,6 @@ element expression. https://doi.org/10.5281/zenodo.20382521
       title = {TExpress: Tools for analyzing transposable element expression},
       author = {Guillermo Peris},
       year = {2026},
-      doi = {10.5281/zenodo.20382522},
+      doi = {10.5281/zenodo.20382521},
       url = {https://doi.org/10.5281/zenodo.20382521},
     }
