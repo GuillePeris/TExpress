@@ -35,27 +35,18 @@ stackBarPlot <- function(aCR,
     )
   }
   
-  # Define levels and colors based on plot type
+  # Define levels and colors based on plot type (shared palettes from
+  # R/graph_theme.R keep colours consistent across all figures).
   if (plot.type == "region") {
-    my.levels <- c(
-      "Promoter", "5' UTR", "Exon", "Intron", "3' UTR",
-      "Downstream", "Intergenic"
-    )
-    palette <- c(
-      "#005F73", "#0A9396", "#94D2BD", "#E9D8A6",
-      "#EE9B00", "#BB3E03", "#870000"
-    )
+    my.levels <- names(.region_palette)
+    palette <- .region_palette
   } else {  # TEclass
-    my.levels <- c("LINE", "LTR", "SINE", "DNA", "Other")
-    palette <- c(
-      "#e64b35", "#4dbbd5", "#00a087", "#3c5488", "#f39b7f"
-    )
-    
+    my.levels <- names(.te_class_palette)
+    palette <- .te_class_palette
+
     # Collapse non-standard classes to "Other"
     aCR$region[!(aCR$region %in% my.levels[1:4])] <- "Other"
   }
-  
-  names(palette) <- my.levels
   
   # Set factor levels
   aCR$region <- factor(aCR$region, levels = my.levels)
@@ -93,37 +84,12 @@ stackBarPlot <- function(aCR,
     ) +
     ggplot2::scale_fill_manual(values = palette)
   
-  # Apply theme
+  # Apply shared publication theme
   p <- p +
+    .theme_texpress(base_size = 14) +
     ggplot2::theme(
-      # Grid
-      panel.grid.major = ggplot2::element_line(color = "grey90", linewidth = 0.5),
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major.x = ggplot2::element_blank(),
       aspect.ratio = 1,
-      
-      # Background
-      panel.background = ggplot2::element_rect(fill = "white", color = NA),
-      plot.background = ggplot2::element_rect(fill = "white", color = NA),
-      
-      # Axis
-      axis.text = ggplot2::element_text(colour = "grey30", size = 16),
-      axis.title.x = ggplot2::element_blank(),
-      axis.title.y = ggplot2::element_text(
-        size = 20,
-        colour = "grey30",
-        hjust = 0.5,
-        margin = ggplot2::margin(r = 10)
-      ),
-      axis.ticks = ggplot2::element_line(color = "grey30", linewidth = 0.5),
-      axis.ticks.length = ggplot2::unit(0.25, "cm"),
-      
-      # Legend
-      legend.text = ggplot2::element_text(size = 12),
-      legend.title = ggplot2::element_blank(),
-      
-      # Title
-      plot.title = ggplot2::element_text(hjust = 0.5, size = 24, color = "red")
+      axis.title.x = ggplot2::element_blank()
     ) +
     ggplot2::labs(
       title = title,

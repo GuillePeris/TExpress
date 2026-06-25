@@ -196,7 +196,7 @@ violinPlotByTEList(
   minlfc     = 1,
   maxpadj    = 0.05,
   plot.title = "TE expression by class",
-  output     = "results/TEs_DEA"
+  output_folder = "results/TEs_DEA"
 )
 ```
 
@@ -214,8 +214,7 @@ violinPlotByTEtype(
   specific_type = "TE_name",
   nTop          = 6,
   plot.title    = "Most dysregulated LINE families",
-  output        = "results/TEs_DEA"
-
+  output_folder = "results/TEs_DEA"
 )
 ```
 

@@ -190,10 +190,9 @@ volcanoPlot <- function(res,
   p <- ggplot2::ggplot(res, ggplot2::aes(x = .data$log2FoldChange, 
                                          y = .data$log10padj, 
                                          col = .data$diffExpressed)) + 
-    ggplot2::geom_point(alpha = 0.7) + 
-    ggplot2::theme_classic(base_size = 12) + #, base_family = "Arial") +
+    ggplot2::geom_point(alpha = 0.7) +
     ggplot2::scale_colour_manual(values = color_palette) +
-    ggplot2::xlim(-maxX, maxX) + 
+    ggplot2::xlim(-maxX, maxX) +
     ggplot2::ylim(0, maxY)
   
   # Add outlier points as triangles  
@@ -232,20 +231,12 @@ volcanoPlot <- function(res,
   }
   
   # Theme management
-  p <- p + 
-    ggplot2::theme(
-      panel.grid.major = ggplot2::element_blank(), 
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.border = ggplot2::element_rect(colour = "black", fill = NA),
-      aspect.ratio = 1, 
-      axis.text = ggplot2::element_text(colour = 1, size = 16),
-      axis.line = ggplot2::element_line(colour = "black"),
-      legend.position = "none",
-      plot.title = ggplot2::element_text(hjust = 0.5, size = 14, color = "red")
-    ) +
+  p <- p +
+    .theme_texpress(aspect = 1) +
+    ggplot2::theme(legend.position = "none") +
     ggplot2::labs(
-      title = plot.title, 
-      x = "log2(fold-change)", 
+      title = plot.title,
+      x = "log2(fold-change)",
       y = "-log10(adjusted p-value)"
     )
   
@@ -382,17 +373,8 @@ MAPlot <- function(res,
   
   # Theme management
   p <- p +
-    ggplot2::theme_classic(base_size = 12) + 
-    ggplot2::theme(
-      panel.grid.major = ggplot2::element_blank(),
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.border = ggplot2::element_rect(colour = "black", fill = NA),
-      aspect.ratio = 1,
-      axis.text = ggplot2::element_text(colour = 1, size = 16),
-      axis.line = ggplot2::element_line(colour = "black"),
-      legend.position = "none",
-      plot.title = ggplot2::element_text(hjust = 0.5, size = 14, color = "red")
-    ) +
+    .theme_texpress(aspect = 1) +
+    ggplot2::theme(legend.position = "none") +
     ggplot2::labs(
       title = plot.title,
       y = "log2(fold-change)",

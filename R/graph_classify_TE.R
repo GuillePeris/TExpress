@@ -435,37 +435,10 @@ graph_classify_TE <- function(res,
       show.legend = FALSE
     )
   
-  # Apply theme
+  # Apply shared publication theme
   p <- p +
-    ggplot2::theme(
-      # Grid
-      panel.grid.major = ggplot2::element_line(color = "grey90", linewidth = 0.5),
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major.x = ggplot2::element_blank(),
-
-      # Background
-      panel.background = ggplot2::element_rect(fill = "white", color = NA),
-      plot.background = ggplot2::element_rect(fill = "white", color = NA),
-      
-      # Axis
-      axis.text = ggplot2::element_text(colour = "grey30", size = 12),
-      axis.title.x = ggplot2::element_blank(),
-      axis.title.y = ggplot2::element_text(
-        size = 20,
-        colour = "grey30",
-        hjust = 0.5,
-        margin = ggplot2::margin(r = 10)
-      ),
-      axis.ticks.y = ggplot2::element_line(color = "grey30", linewidth = 0.5),
-      axis.ticks.length.y = ggplot2::unit(0.25, "cm"),
-      
-      # Legend
-      legend.text = ggplot2::element_text(size = 12),
-      legend.title = ggplot2::element_blank(),
-      
-      # Title
-      plot.title = ggplot2::element_text(hjust = 0.5, size = 18, color = "red")
-    ) +
+    .theme_texpress(base_size = 13) +
+    ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
     ggplot2::labs(
       y = "% TE loci"
     )
@@ -519,22 +492,23 @@ graph_classify_TE <- function(res,
     levels = c("LTR", "LINE", "SINE", "DNA")
   )
 
-  plot.title <- paste0(plot.title, " - self expressed")
-  
+  plot.title <- stringr::str_wrap(
+    paste0(plot.title, " - self expressed"), width = 40
+  )
+
   # Create bar plot
   p <- ggplot2::ggplot(
     res_summary,
-    ggplot2::aes(x = .data$TE_class, 
-                 y = .data$prop, 
+    ggplot2::aes(x = .data$TE_class,
+                 y = .data$prop,
                  fill = .data$TE_class,
                  ymin = 0,
                  ymax = max(.data$prop + 5, 100)
     )
-  ) + 
-    ggplot2::geom_bar(width = 0.8, stat = "identity", color = "white") 
+  ) +
+    ggplot2::geom_bar(width = 0.8, stat = "identity", color = "white") +
+    ggplot2::scale_fill_manual(values = .te_class_palette)
 
-  
-  
   # Add percentage labels
   p <- p +
     ggfittext::geom_fit_text(
@@ -545,55 +519,30 @@ graph_classify_TE <- function(res,
       contrast = TRUE,
       show.legend = FALSE
     )
-  
-  # Apply theme
+
+  # Apply shared publication theme
   p <- p +
+    .theme_texpress(base_size = 13) +
     ggplot2::theme(
-      # Grid
-      panel.grid.major = ggplot2::element_line(color = "grey90", linewidth = 0.5),
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major.x = ggplot2::element_blank(),
-      
-      # Background
-      panel.background = ggplot2::element_rect(fill = "white", color = NA),
-      plot.background = ggplot2::element_rect(fill = "white", color = NA),
-      
-      # Axis
-      axis.text = ggplot2::element_text(colour = "grey30", size = 12),
-      axis.title.x = ggplot2::element_blank(),
-      axis.title.y = ggplot2::element_text(
-        size = 20,
-        colour = "grey30",
-        hjust = 0.5,
-        margin = ggplot2::margin(r = 10)
-      ),
-      axis.ticks.y = ggplot2::element_line(color = "grey30", linewidth = 0.5),
-      axis.ticks.length.y = ggplot2::unit(0.25, "cm"),
-      
-      # Legend
-      legend.position="none",
-      
-      # Title
-      plot.title = ggplot2::element_text(hjust = 0.5, size = 18, color = "red")
+      legend.position = "none",
+      axis.title.x = ggplot2::element_blank()
     ) +
-    ggplot2::labs(
-      y = "% TE loci"
-    )
-  
+    ggplot2::labs(y = "% TE loci")
+
   # Format y-axis as percentages
   p <- p +
     ggplot2::scale_y_continuous(
       labels = function(x) paste0(x, " %"),
       expand = c(0, 0)
     )
-  
-  
+
+
   # Add title if provided
   if (!is.null(plot.title)) {
     p <- p + ggplot2::ggtitle(plot.title)
   }
-  
-  p 
+
+  p
 }
 
 #' Create Bar Plot with most frequent TE_family or TE_name
@@ -635,55 +584,28 @@ graph_classify_TE <- function(res,
     stop("No data remaining after summarization.", call. = FALSE)
   }
   
-  plot.title <- paste0(plot.title, "\nself expressed by ", type)
-  
-  # Create bar plot
+  plot.title <- stringr::str_wrap(
+    paste0(plot.title, " - self expressed by ", type), width = 40
+  )
+
+  # Create bar plot (single accent colour; the x-axis already identifies bars).
   p <- ggplot2::ggplot(
     res_summary,
-    ggplot2::aes(x = .data$TE_type, 
-                 y = .data$n, 
-                 fill = .data$TE_type
+    ggplot2::aes(x = .data$TE_type,
+                 y = .data$n
     )
-  ) + 
-    ggplot2::geom_bar(width = 0.6, stat = "identity", color = "white") 
-  
-  
-  
-  # Apply theme
+  ) +
+    ggplot2::geom_bar(width = 0.6, stat = "identity",
+                      fill = .bar_accent, color = "white")
+
+  # Apply shared publication theme
   p <- p +
+    .theme_texpress(base_size = 13) +
     ggplot2::theme(
-      # Grid
-      panel.grid.major = ggplot2::element_line(color = "grey90", linewidth = 0.5),
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major.x = ggplot2::element_blank(),
-      
-      # Background
-      panel.background = ggplot2::element_rect(fill = "white", color = NA),
-      plot.background = ggplot2::element_rect(fill = "white", color = NA),
-      
-      # Axis
-      axis.text.x = ggplot2::element_text(colour = "grey30", 
-                                        size = 12, 
-                                        angle = 45, 
-                                        hjust = 1),
-      axis.text.y = ggplot2::element_text(colour = "grey30", 
-                                          size = 12),
+      legend.position = "none",
       axis.title.x = ggplot2::element_blank(),
-      axis.title.y = ggplot2::element_text(
-        size = 20,
-        colour = "grey30",
-        hjust = 0.5,
-        margin = ggplot2::margin(r = 10)
-      ),
-      axis.ticks.x = ggplot2::element_blank(),
-      axis.ticks.y = ggplot2::element_line(color = "grey30", linewidth = 0.5),
-      axis.ticks.length.y = ggplot2::unit(0.25, "cm"),
-      
-      # Legend
-      legend.position="none",
-      
-      # Title
-      plot.title = ggplot2::element_text(hjust = 0.5, size = 18, color = "red")
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
+      axis.ticks.x = ggplot2::element_blank()
     ) +
     ggplot2::labs(
       y = "# of self expressed TEs"

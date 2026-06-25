@@ -301,52 +301,54 @@ violinPlotByTEtype <- function(res.TEs,
 }
 
 #' Create and save violin plot
+#'
+#' Draws a violin of log2 fold changes per group with the significantly
+#' up-/down-regulated loci overlaid as one-sided jittered points (red = up,
+#' blue = down), using the shared package theme.
+#'
+#' @importFrom rlang .data
 #' @noRd
 .create_and_save_violin_plot <- function(data, x, filename, plot.title,
                                          subtitle, width, height, device) {
   ylim <- c(min(data$log2FoldChange) - 0.25, max(data$log2FoldChange) + 0.25)
-  
+
   p <- ggpubr::ggviolin(data, x = x, y = "log2FoldChange", alpha = 0.5,
                         fill = "#4d6600", color = "#333300",
                         draw_quantiles = 0.5,
                         short.panel.labs = FALSE, width = 0.6, ylim = ylim,
                         outlier.shape = NA)
-  
+
   p <- p +
     gghalves::geom_half_point(
       side = "l",
       data = data[data$expression == "up", ],
       shape = 21, range_scale = .4,
       alpha = 0.5,
-      fill = "#990f02", color = "black", stroke = 0.2,
-      show.legend = TRUE, width = 0.25
+      fill = .expr_palette[["up"]], color = "black", stroke = 0.2,
+      show.legend = FALSE, width = 0.25
     ) +
     gghalves::geom_half_point(
       data = data[data$expression == "down", ],
       shape = 21, alpha = 0.5,
-      fill = "#0f4392", color = "black", stroke = 0.2,
+      fill = .expr_palette[["down"]], color = "black", stroke = 0.2,
       show.legend = FALSE, width = 0.25
     )
-  
+
   p <- p +
+    ggplot2::geom_hline(yintercept = 0, linetype = 2, linewidth = 0.2) +
+    ggplot2::scale_y_continuous(breaks = c(-6, -4, -2, 0, 2, 4, 6)) +
+    ggplot2::labs(y = "log2(FC)") +
+    ggplot2::ggtitle(plot.title, subtitle = subtitle) +
+    .theme_texpress(base_size = 13) +
+    ggplot2::guides(shape = "none") +
     ggplot2::theme(
       axis.title.x = ggplot2::element_blank(),
-      plot.title = ggplot2::element_text(hjust = 0.5)
-    ) +
-    ggplot2::theme(
       axis.text.x = ggplot2::element_text(
-        face = "bold", color = "#993333",
-        size = 12, angle = 45, hjust = 1
-      )
-    ) +
-    ggplot2::labs(y = "log2(FC)") +
-    ggplot2::guides(shape = "none") +
-    ggplot2::theme(legend.position = "none") +
-    ggplot2::geom_hline(yintercept = 0, linetype = 2, linewidth = 0.2) +
-    ggplot2::ggtitle(plot.title, subtitle = subtitle) +
-    ggplot2::theme(plot.subtitle = ggplot2::element_text(hjust = 0.5)) +
-    ggplot2::scale_y_continuous(breaks = c(-6, -4, -2, 0, 2, 4, 6))
-  
+        face = "bold", colour = "#993333", angle = 45, hjust = 1
+      ),
+      legend.position = "none"
+    )
+
   # Save plot
   tryCatch(
     printDevice(p, filename, device, width = width, height = height),
