@@ -1,6 +1,6 @@
 Package: TExpress
 Title: Tools for Analyzing Transposable Element (TE) Expression
-Version: 1.0
+Version: 1.1
 Authors@R:
     person("Guillermo", "Peris", , "peris@uji.es",
     role = c("aut", "cre"),
