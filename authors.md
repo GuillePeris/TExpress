@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/GuillePeris/TExpress/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/GuillePeris/TExpress/blob/1.1/inst/CITATION)
 
 Peris, Guillermo (2026). TExpress: Tools for analyzing transposable
 element expression. https://doi.org/10.5281/zenodo.20382522
