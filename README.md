@@ -279,10 +279,10 @@ my.data <- downloadTestData(folder = "~/data/TExpress_test")
 
 If you use TExpress in your research, please cite it through zenodo DOI.
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20382522.svg)](https://doi.org/10.5281/zenodo.20382522)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20382521.svg)](https://doi.org/10.5281/zenodo.20382521)
 
 Peris, Guillermo. TExpress: Tools for analyzing transposable element expression (2026). 
-[https://doi.org/10.5281/zenodo.20382522](https://doi.org/10.5281/zenodo.20382522).
+[https://doi.org/10.5281/zenodo.20382521](https://doi.org/10.5281/zenodo.20382521).
 
 
 
