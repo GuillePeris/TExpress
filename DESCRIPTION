@@ -17,7 +17,6 @@ Depends:
     R (>= 4.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 8.0.0
 Imports: 
     BiocGenerics,
     ChIPseeker,
@@ -52,3 +51,4 @@ Suggests:
 Remotes: erocoar/gghalves
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.1.0

@@ -30,6 +30,8 @@
 #'   for ranking and visualization. Default is FALSE.
 #' @param saveNorm Logical. If TRUE, saves normalized count matrices for both
 #'   genes and TEs. If FALSE, only saves DESeq2 results. Default is TRUE.
+#' @param keep.standard.chroms Logical. If TRUE, removes not standard chromosomes
+#'   from TE annotation. Default is TRUE.
 #'
 #' @details
 #' The pipeline performs the following steps:
@@ -126,7 +128,8 @@ TE_DEA <- function(metafile,
                    plot.title = "",
                    useCtrlGenes = FALSE,
                    shrinklog2FC = FALSE,
-                   saveNorm = TRUE) {
+                   saveNorm = TRUE, 
+                   keep.standard.chroms=TRUE) {
   message("============================================") 
   message("  TE loci differential expression analysis  ")
   message("============================================") 
@@ -204,7 +207,7 @@ TE_DEA <- function(metafile,
   start.time <- Sys.time()
   
   gtf.TE <- tryCatch(
-    importGTF(gtf.TE.file, format = "gtf"),
+    importGTF(gtf.TE.file, format = "gtf", keep.standard.chroms = keep.standard.chroms),
     error = function(e) {
       stop("Failed to import TE GTF file: ", e$message, call. = FALSE)
     }

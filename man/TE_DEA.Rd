@@ -15,7 +15,8 @@ TE_DEA(
   plot.title = "",
   useCtrlGenes = FALSE,
   shrinklog2FC = FALSE,
-  saveNorm = TRUE
+  saveNorm = TRUE,
+  keep.standard.chroms = TRUE
 )
 }
 \arguments{
@@ -55,6 +56,9 @@ for ranking and visualization. Default is FALSE.}
 
 \item{saveNorm}{Logical. If TRUE, saves normalized count matrices for both
 genes and TEs. If FALSE, only saves DESeq2 results. Default is TRUE.}
+
+\item{keep.standard.chroms}{Logical. If TRUE, removes not standard chromosomes
+from TE annotation. Default is TRUE.}
 }
 \value{
 A list with four elements:
