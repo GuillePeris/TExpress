@@ -1,9 +1,9 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   TExpress: TExpress.html
-last_built: 2026-06-25T15:04Z
+last_built: 2026-09-22T07:39Z
 urls:
   reference: https://guilleperis.github.io/TExpress/reference
   article: https://guilleperis.github.io/TExpress/articles
