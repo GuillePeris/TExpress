@@ -57,7 +57,8 @@ analysis, and generates visualization plots.</p>
 <span>  plot.title <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  useCtrlGenes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  shrinklog2FC <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  saveNorm <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  saveNorm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  keep.standard.chroms <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -122,6 +123,11 @@ for ranking and visualization. Default is FALSE.</p></dd>
 <dt id="arg-savenorm">saveNorm<a class="anchor" aria-label="anchor" href="#arg-savenorm"></a></dt>
 <dd><p>Logical. If TRUE, saves normalized count matrices for both
 genes and TEs. If FALSE, only saves DESeq2 results. Default is TRUE.</p></dd>
+
+
+<dt id="arg-keep-standard-chroms">keep.standard.chroms<a class="anchor" aria-label="anchor" href="#arg-keep-standard-chroms"></a></dt>
+<dd><p>Logical. If TRUE, removes not standard chromosomes
+from TE annotation. Default is TRUE.</p></dd>
 
 </dl></div>
     <div class="section level2">
