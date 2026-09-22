@@ -314,7 +314,8 @@ violinPlotByTEtype <- function(res.TEs,
 
   p <- ggpubr::ggviolin(data, x = x, y = "log2FoldChange", alpha = 0.5,
                         fill = "#4d6600", color = "#333300",
-                        draw_quantiles = 0.5,
+                        quantiles = 0.5,
+                        quantile.linetype = "solid",                        
                         short.panel.labs = FALSE, width = 0.6, ylim = ylim,
                         outlier.shape = NA)
 
