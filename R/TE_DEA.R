@@ -213,7 +213,10 @@ TE_DEA <- function(metafile,
     }
   )  
   
-  TE_annot.df <- as.data.frame(gtf.TE)
+  # Keep only annotation with distinct TE transcript_id. When duplicates
+  # found, keep first.
+  TE_annot.df <- as.data.frame(gtf.TE) %>% 
+         distinct(transcript_id, .keep_all = TRUE) 
   
   end.time <- Sys.time()
   duration <- difftime(end.time, start.time, units="secs")
