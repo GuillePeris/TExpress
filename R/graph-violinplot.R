@@ -251,13 +251,13 @@ violinPlotByTEtype <- function(res.TEs,
     all_types <- vapply(te_identifier, function(te) .find_max_column(res.TEs, te),
                         character(1), USE.NAMES = FALSE)
     
-    if(any(is.na(all_types))) {
-      stop(
-        "Some TEs were not found in results: ",
-        paste(te_identifier[is.na(all_types)], collapse = ", "),
-        call. = FALSE
-      )
-    }
+    # if(any(is.na(all_types))) {
+    #   stop(
+    #     "Some TEs were not found in results: ",
+    #     paste(te_identifier[is.na(all_types)], collapse = ", "),
+    #     call. = FALSE
+    #   )
+    # }
     
     if (length(unique(all_types)) > 1L) {
       stop(
