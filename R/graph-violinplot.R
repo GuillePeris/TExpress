@@ -17,6 +17,9 @@
 #' @param height Numeric plot height in inches (default: 7)
 #' @param device Character string specifying output device (default: "png")
 #' @param output_folder Character string path to output directory (default: ".")
+#' @param output_file Character string with the output file name, without
+#'   extension (added from \code{device}). If NULL, uses
+#'   "violinPlot_<broad_type>" (default: NULL)
 #' @param plot.title Character string for plot title (default: "Violin plot")
 #'
 #' @return Invisibly returns NULL. Saves plot to file as side effect.
@@ -41,6 +44,7 @@ violinPlotByTEList <- function(res.TEs,
                                height = 7,
                                device = "png",
                                output_folder = ".",
+                               output_file = NULL,
                                plot.title = "Violin plot") {
   
   # Input validation
@@ -66,7 +70,10 @@ violinPlotByTEList <- function(res.TEs,
   filtered_data <- .label_expression(filtered_data, minlfc, maxpadj)
   
   # Create and save plot
-  filename <- file.path(output_folder, paste("violinPlot", broad_type, sep = "_"))
+  if (is.null(output_file)) {
+    output_file <- paste("violinPlot", broad_type, sep = "_")
+  }
+  filename <- file.path(output_folder, output_file)
   subtitle <- paste0("Expression of specific ", broad_type)
   
   .create_and_save_violin_plot(
@@ -108,6 +115,9 @@ violinPlotByTEList <- function(res.TEs,
 #' @param height Numeric plot height in inches (default: 7)
 #' @param device Character string specifying output device (default: "png")
 #' @param output_folder Character string path to output directory (default: ".")
+#' @param output_file Character string with the output file name, without
+#'   extension (added from \code{device}). If NULL, uses
+#'   "violinPlot_<TE_type>_<specific_type>" (default: NULL)
 #' @param plot.title Character string for plot title (default: "Violin plot")
 #'
 #' @return Invisibly returns NULL. Saves plot to file as side effect.
@@ -135,6 +145,7 @@ violinPlotByTEtype <- function(res.TEs,
                        height = 7,
                        device = "png",
                        output_folder = ".",
+                       output_file = NULL,
                        plot.title = "Violin plot") {
   
   # Input validation
@@ -167,7 +178,10 @@ violinPlotByTEtype <- function(res.TEs,
   subset.TEs[, specific_type] <- factor(subset.TEs[, specific_type], levels = levels.specific.TEs)
   
   # Create and save plot
-  filename <- file.path(output_folder, paste("violinPlot", TE_type, specific_type, sep = "_"))
+  if (is.null(output_file)) {
+    output_file <- paste("violinPlot", TE_type, specific_type, sep = "_")
+  }
+  filename <- file.path(output_folder, output_file)
   subtitle <- paste0("Most ", order, "-dysregulated ", specific_type, " in ", TE_type, " ", broad_type)
   
   .create_and_save_violin_plot(

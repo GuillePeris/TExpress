@@ -15,6 +15,7 @@ violinPlotByTEList(
   height = 7,
   device = "png",
   output_folder = ".",
+  output_file = NULL,
   plot.title = "Violin plot"
 )
 }
@@ -41,6 +42,10 @@ belong to the same hierarchical level}
 \item{device}{Character string specifying output device (default: "png")}
 
 \item{output_folder}{Character string path to output directory (default: ".")}
+
+\item{output_file}{Character string with the output file name, without
+extension (added from \code{device}). If NULL, uses
+"violinPlot_<broad_type>" (default: NULL)}
 
 \item{plot.title}{Character string for plot title (default: "Violin plot")}
 }
