@@ -17,6 +17,7 @@ violinPlotByTEList(
   height = 7,
   device = "png",
   output_folder = ".",
+  output_file = NULL,
   plot.title = "Violin plot"
 )
 ```
@@ -67,6 +68,12 @@ violinPlotByTEList(
 - output_folder:
 
   Character string path to output directory (default: ".")
+
+- output_file:
+
+  Character string with the output file name, without extension (added
+  from `device`). If NULL, uses "violinPlot\_\<broad_type\>" (default:
+  NULL)
 
 - plot.title:
 
