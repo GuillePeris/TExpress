@@ -32,6 +32,10 @@
 #'   genes and TEs. If FALSE, only saves DESeq2 results. Default is TRUE.
 #' @param keep.standard.chroms Logical. If TRUE, removes not standard chromosomes
 #'   from TE annotation. Default is TRUE.
+#' @param batch Logical. If TRUE, the Batch column of the metadata file is
+#'   included in the DESeq2 design (\code{~ batch + condition}) to correct for
+#'   batch effects. The metadata file must then contain a Batch column (see
+#'   \code{\link{read_metadata}}). Default is FALSE.
 #'
 #' @details
 #' The pipeline performs the following steps:
@@ -40,7 +44,8 @@
 #'   \item Imports TE annotations from GTF file
 #'   \item Adds genomic coordinates to TE features
 #'   \item Filters non-standard chromosomes
-#'   \item Performs DESeq2 differential expression analysis
+#'   \item Performs DESeq2 differential expression analysis, optionally
+#'     including a batch effect in the design
 #'   \item Extracts normalized counts
 #'   \item Separates results for genes vs. TEs
 #'   \item Saves results to separate directories
@@ -104,7 +109,8 @@
 #'   plot.title = "KO vs WT",
 #'   useCtrlGenes = TRUE,
 #'   shrinklog2FC = TRUE,
-#'   saveNorm = TRUE
+#'   saveNorm = TRUE,
+#'   batch = FALSE
 #' )
 #'
 #' # Access TE results
@@ -129,7 +135,8 @@ TE_DEA <- function(metafile,
                    useCtrlGenes = FALSE,
                    shrinklog2FC = FALSE,
                    saveNorm = TRUE, 
-                   keep.standard.chroms=TRUE) {
+                   keep.standard.chroms=TRUE,
+                   batch = FALSE) {
   message("============================================") 
   message("  TE loci differential expression analysis  ")
   message("============================================") 
@@ -160,7 +167,7 @@ TE_DEA <- function(metafile,
     stop("TE GTF file '", gtf.TE.file, "' not found.", call. = FALSE)
   }
   
-  for (argument in c("useCtrlGenes", "shrinklog2FC", "saveNorm")) {
+  for (argument in c("useCtrlGenes", "shrinklog2FC", "saveNorm", "batch")) {
     if (!is.logical(get(argument))) {
       stop("'", argument, "' must be TRUE or FALSE.", call. = FALSE)
     }
@@ -172,7 +179,7 @@ TE_DEA <- function(metafile,
   message("==> Reading metadata and count files.")
   start.time <- Sys.time()
   metadata <- tryCatch(
-    read_metadata(metafile),
+    read_metadata(metafile, batch = batch),
     error = function(e) {
       stop("Failed to read metadata: ", e$message, call. = FALSE)
     }
@@ -271,10 +278,13 @@ TE_DEA <- function(metafile,
   if (shrinklog2FC) {
     message("    Applying log2 fold change shrinkage")
   }
+  if (batch) {
+    message("    Including batch effect in design (~ batch + condition)")
+  }
   start.time <- Sys.time()
   
   dds <- tryCatch(
-    call_deseq2(countData, metadata, useCtrlGenes),
+    call_deseq2(countData, metadata, useCtrlGenes, batch = batch),
     error = function(e) {
       stop("DESeq2 analysis failed: ", e$message, call. = FALSE)
     }
@@ -490,13 +500,15 @@ TE_DEA <- function(metafile,
   
   tryCatch(
     {
-      utils::write.table(
-        df,
+      # fwrite is much faster than write.table on large TE tables.
+      # as.data.frame() handles matrices and S4 DataFrame/DESeqResults.
+      data.table::fwrite(
+        as.data.frame(df),
         file = file,
         sep = "\t",
         quote = FALSE,
         row.names = TRUE,
-        col.names = NA
+        na = "NA"
       )
     },
     error = function(e) {
