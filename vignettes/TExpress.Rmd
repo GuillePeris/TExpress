@@ -74,6 +74,10 @@ reference level, so every reported contrast is **Treat vs. Control**. A minimal
 metadata file is a tab-separated table with four columns: `File`, `Sample`,
 `Group`, and `Condition`.
 
+An optional fifth column, `Batch`, can be added to account for batch effects.
+When `TE_DEA()` is called with `batch = TRUE`, the DESeq2 design becomes
+`~ batch + condition`; with the default `batch = FALSE` the column is ignored.
+
 # Standard workflow
 
 The chunks below are not evaluated when the vignette is built (they require the

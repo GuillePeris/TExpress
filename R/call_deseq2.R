@@ -13,10 +13,18 @@
 #' @param useCtrlGenes Logical. If TRUE, only gene features (those without ":"
 #'   in their names) are used to estimate size factors. If FALSE, all features
 #'   are used. Default is FALSE.
+#' @param batch Logical. If TRUE, the Batch column in metadata is included in
+#'   the design formula to correct for batch effects. Metadata must then
+#'   contain a Batch column, and every batch must contain samples of both
+#'   conditions. Default is FALSE.
 #'
 #' @details
 #' The function creates a DESeqDataSet with a design formula \code{~ condition},
 #' where condition is derived from the Condition column in metadata (Control vs Treat).
+#'
+#' When \code{batch = TRUE}, the design formula is \code{~ batch + condition},
+#' where batch is a factor built from the Batch column in metadata. Condition is
+#' kept as the last term so the Treat vs Control contrast is unchanged.
 #'
 #' When \code{useCtrlGenes = TRUE}, size factors are estimated using only
 #' gene features (rownames without ":"), which can be more appropriate when
@@ -47,7 +55,7 @@
 #' res <- results_deseq2(dds)
 #' }
 #'
-call_deseq2 <- function(countData, metadata, useCtrlGenes) {
+call_deseq2 <- function(countData, metadata, useCtrlGenes = FALSE, batch = FALSE) {
   # Setting ghost variables to NULL to pass check() 
   Condition <- NULL
   
@@ -67,9 +75,25 @@ call_deseq2 <- function(countData, metadata, useCtrlGenes) {
   if (!is.data.frame(metadata)) {
     stop("'metadata' must be a data frame.", call. = FALSE)
   }
-  
-  
-  
+
+  if (!isTRUE(batch) && !isFALSE(batch)) {
+    stop("'batch' must be TRUE or FALSE.", call. = FALSE)
+  }
+
+  # Check Batch column only when batch effect is requested.
+  if (batch) {
+    if (!"Batch" %in% colnames(metadata)) {
+      stop("'batch = TRUE' requires a 'Batch' column in metadata.", call. = FALSE)
+    }
+    if (anyNA(metadata$Batch)) {
+      stop("Metadata 'Batch' column must not contain missing values.", call. = FALSE)
+    }
+    if (length(unique(metadata$Batch)) < 2) {
+      stop("Metadata 'Batch' column must contain at least two different values.",
+           call. = FALSE)
+    }
+  }
+
   # Check correct factors in Condition.
   expected_levels <- c("Control", "Treat")
   if (any(!metadata$Condition %in% expected_levels)) {
@@ -85,10 +109,28 @@ call_deseq2 <- function(countData, metadata, useCtrlGenes) {
   # Ensure Condition is a factor with correct levels
   coldata$condition <- factor(metadata$Condition, levels = expected_levels)
 
+  # Batch as factor (numeric batch labels must not be treated as continuous).
+  if (batch) {
+    coldata$batch <- factor(metadata$Batch)
+
+    # Each batch needs samples of both conditions; otherwise the batch term
+    # absorbs those samples and they no longer inform the condition effect.
+    batch_table <- table(coldata$batch, coldata$condition)
+    bad <- rownames(batch_table)[apply(batch_table, 1, min) < 1]
+    if (length(bad) > 0) {
+      stop("With 'batch = TRUE', every batch must contain samples of both ",
+           "conditions. Batches failing: ",
+           paste0(bad, " (Control=", batch_table[bad, "Control"],
+                  ", Treat=", batch_table[bad, "Treat"], ")", collapse = "; "),
+           ".", call. = FALSE)
+    }
+  }
+  design <- if (batch) ~ batch + condition else ~ condition
+
   # DESeq2 analysis
   dds <- DESeq2::DESeqDataSetFromMatrix(countData = countData,
                                 colData = coldata,
-                                design = ~ condition)
+                                design = design)
   
   # Use genes+TEs or only genes to estimate size factors.
   # We assume TE annotation includes ":"

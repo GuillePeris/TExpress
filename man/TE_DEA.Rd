@@ -16,7 +16,8 @@ TE_DEA(
   useCtrlGenes = FALSE,
   shrinklog2FC = FALSE,
   saveNorm = TRUE,
-  keep.standard.chroms = TRUE
+  keep.standard.chroms = TRUE,
+  batch = FALSE
 )
 }
 \arguments{
@@ -59,6 +60,11 @@ genes and TEs. If FALSE, only saves DESeq2 results. Default is TRUE.}
 
 \item{keep.standard.chroms}{Logical. If TRUE, removes not standard chromosomes
 from TE annotation. Default is TRUE.}
+
+\item{batch}{Logical. If TRUE, the Batch column of the metadata file is
+included in the DESeq2 design (\code{~ batch + condition}) to correct for
+batch effects. The metadata file must then contain a Batch column (see
+\code{\link{read_metadata}}). Default is FALSE.}
 }
 \value{
 A list with four elements:
@@ -82,7 +88,8 @@ The pipeline performs the following steps:
 \item Imports TE annotations from GTF file
 \item Adds genomic coordinates to TE features
 \item Filters non-standard chromosomes
-\item Performs DESeq2 differential expression analysis
+\item Performs DESeq2 differential expression analysis, optionally
+including a batch effect in the design
 \item Extracts normalized counts
 \item Separates results for genes vs. TEs
 \item Saves results to separate directories
@@ -137,7 +144,8 @@ results <- TE_DEA(
   plot.title = "KO vs WT",
   useCtrlGenes = TRUE,
   shrinklog2FC = TRUE,
-  saveNorm = TRUE
+  saveNorm = TRUE,
+  batch = FALSE
 )
 
 # Access TE results

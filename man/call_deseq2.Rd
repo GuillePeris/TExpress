@@ -4,7 +4,7 @@
 \alias{call_deseq2}
 \title{Perform Differential Expression Analysis Using DESeq2}
 \usage{
-call_deseq2(countData, metadata, useCtrlGenes)
+call_deseq2(countData, metadata, useCtrlGenes = FALSE, batch = FALSE)
 }
 \arguments{
 \item{countData}{Data frame with count matrix as returned by
@@ -19,6 +19,11 @@ and Condition. Sample names must match column names in countData.}
 \item{useCtrlGenes}{Logical. If TRUE, only gene features (those without ":"
 in their names) are used to estimate size factors. If FALSE, all features
 are used. Default is FALSE.}
+
+\item{batch}{Logical. If TRUE, the Batch column in metadata is included in
+the design formula to correct for batch effects. Metadata must then
+contain a Batch column, and every batch must contain samples of both
+conditions. Default is FALSE.}
 }
 \value{
 A DESeqDataSet object after running the DESeq2 analysis pipeline.
@@ -30,6 +35,10 @@ Optionally uses only gene features (non-TE) for size factor estimation.
 \details{
 The function creates a DESeqDataSet with a design formula \code{~ condition},
 where condition is derived from the Condition column in metadata (Control vs Treat).
+
+When \code{batch = TRUE}, the design formula is \code{~ batch + condition},
+where batch is a factor built from the Batch column in metadata. Condition is
+kept as the last term so the Treat vs Control contrast is unchanged.
 
 When \code{useCtrlGenes = TRUE}, size factors are estimated using only
 gene features (rownames without ":"), which can be more appropriate when
