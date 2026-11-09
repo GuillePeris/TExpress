@@ -19,7 +19,8 @@ TE_DEA(
   useCtrlGenes = FALSE,
   shrinklog2FC = FALSE,
   saveNorm = TRUE,
-  keep.standard.chroms = TRUE
+  keep.standard.chroms = TRUE,
+  batch = FALSE
 )
 ```
 
@@ -90,6 +91,14 @@ TE_DEA(
   Logical. If TRUE, removes not standard chromosomes from TE annotation.
   Default is TRUE.
 
+- batch:
+
+  Logical. If TRUE, the Batch column of the metadata file is included in
+  the DESeq2 design (`~ batch + condition`) to correct for batch
+  effects. The metadata file must then contain a Batch column (see
+  [`read_metadata`](https://guilleperis.github.io/TExpress/reference/read_metadata.md)).
+  Default is FALSE.
+
 ## Value
 
 A list with four elements:
@@ -123,7 +132,8 @@ The pipeline performs the following steps:
 
 4.  Filters non-standard chromosomes
 
-5.  Performs DESeq2 differential expression analysis
+5.  Performs DESeq2 differential expression analysis, optionally
+    including a batch effect in the design
 
 6.  Extracts normalized counts
 
@@ -182,7 +192,8 @@ results <- TE_DEA(
   plot.title = "KO vs WT",
   useCtrlGenes = TRUE,
   shrinklog2FC = TRUE,
-  saveNorm = TRUE
+  saveNorm = TRUE,
+  batch = FALSE
 )
 
 # Access TE results

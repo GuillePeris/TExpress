@@ -1,5 +1,17 @@
 # Changelog
 
+## TExpress 1.1
+
+- [`TE_DEA()`](https://guilleperis.github.io/TExpress/reference/TE_DEA.md),
+  [`call_deseq2()`](https://guilleperis.github.io/TExpress/reference/call_deseq2.md)
+  and
+  [`read_metadata()`](https://guilleperis.github.io/TExpress/reference/read_metadata.md)
+  gain a `batch` argument (default `FALSE`). When `TRUE`, the `Batch`
+  column of the metadata is included in the DESeq2 design
+  (`~ batch + condition`). Metadata files may now contain an optional
+  fifth `Batch` column. With `batch = TRUE`, every batch must contain
+  samples of both conditions.
+
 ## TExpress 1.0
 
 First public release.

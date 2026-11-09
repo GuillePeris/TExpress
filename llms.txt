@@ -128,14 +128,16 @@ filter_GTF(gtf.genes.file,
 ### 2. Metadata File
 
 A **tab-separated** text file describing your samples. The file must
-contain exactly four columns with specific headers and requirements:
+contain four columns with specific headers and requirements, plus an
+optional fifth `Batch` column:
 
-| Column      | Description               | Requirements                        |
-|-------------|---------------------------|-------------------------------------|
-| `File`      | TE count file names       | Must match files in count directory |
-| `Sample`    | Unique sample identifiers | Used as column names in output      |
-| `Group`     | Sample group labels       | For organizing samples              |
-| `Condition` | Experimental condition    | **Must** be “Control” or “Treat”    |
+| Column | Description | Requirements |
+|----|----|----|
+| `File` | TE count file names | Must match files in count directory |
+| `Sample` | Unique sample identifiers | Used as column names in output |
+| `Group` | Sample group labels | For organizing samples |
+| `Condition` | Experimental condition | **Must** be “Control” or “Treat” |
+| `Batch` | Batch label (optional) | Required only when `TE_DEA(..., batch = TRUE)`; at least two different values |
 
 **Example metadata file:**
 
@@ -151,6 +153,12 @@ contain exactly four columns with specific headers and requirements:
 
 > ⚠️ **Important:** The `Condition` column must contain exactly
 > “Control” and “Treat” (case-sensitive) for DESeq2 analysis.
+
+> **Batch effect:** with `batch = TRUE` in
+> [`TE_DEA()`](https://guilleperis.github.io/TExpress/reference/TE_DEA.md),
+> the `Batch` column is added to the DESeq2 design
+> (`~ batch + condition`). Batch must not be fully confounded with
+> Condition (each batch should contain both Control and Treat samples).
 
 ### 3. Annotation Files
 

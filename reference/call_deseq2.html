@@ -43,7 +43,7 @@ Optionally uses only gene features (non-TE) for size factor estimation.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">call_deseq2</span><span class="op">(</span><span class="va">countData</span>, <span class="va">metadata</span>, <span class="va">useCtrlGenes</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">call_deseq2</span><span class="op">(</span><span class="va">countData</span>, <span class="va">metadata</span>, useCtrlGenes <span class="op">=</span> <span class="cn">FALSE</span>, batch <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -68,6 +68,13 @@ and Condition. Sample names must match column names in countData.</p></dd>
 in their names) are used to estimate size factors. If FALSE, all features
 are used. Default is FALSE.</p></dd>
 
+
+<dt id="arg-batch">batch<a class="anchor" aria-label="anchor" href="#arg-batch"></a></dt>
+<dd><p>Logical. If TRUE, the Batch column in metadata is included in
+the design formula to correct for batch effects. Metadata must then
+contain a Batch column, and every batch must contain samples of both
+conditions. Default is FALSE.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -77,6 +84,9 @@ are used. Default is FALSE.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function creates a DESeqDataSet with a design formula <code>~ condition</code>,
 where condition is derived from the Condition column in metadata (Control vs Treat).</p>
+<p>When <code>batch = TRUE</code>, the design formula is <code>~ batch + condition</code>,
+where batch is a factor built from the Batch column in metadata. Condition is
+kept as the last term so the Treat vs Control contrast is unchanged.</p>
 <p>When <code>useCtrlGenes = TRUE</code>, size factors are estimated using only
 gene features (rownames without ":"), which can be more appropriate when
 analyzing datasets containing both genes and transposable elements. This

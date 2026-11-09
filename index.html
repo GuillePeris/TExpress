@@ -138,7 +138,7 @@ of transposable elements, including:</p>
 <div class="section level3">
 <h3 id="id_2-metadata-file">2. Metadata File<a class="anchor" aria-label="anchor" href="#id_2-metadata-file"></a>
 </h3>
-<p>A <strong>tab-separated</strong> text file describing your samples. The file must contain exactly four columns with specific headers and requirements:</p>
+<p>A <strong>tab-separated</strong> text file describing your samples. The file must contain four columns with specific headers and requirements, plus an optional fifth <code>Batch</code> column:</p>
 <table class="table">
 <colgroup>
 <col width="22%">
@@ -172,6 +172,11 @@ of transposable elements, including:</p>
 <td>
 <strong>Must</strong> be “Control” or “Treat”</td>
 </tr>
+<tr>
+<td><code>Batch</code></td>
+<td>Batch label (optional)</td>
+<td>Required only when <code>TE_DEA(..., batch = TRUE)</code>; at least two different values</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Example metadata file:</strong></p>
@@ -186,6 +191,9 @@ TElocal_KO3.cntTable    KO3 KO  Treat
 TElocal_KO4.cntTable    KO4 KO  Treat</code></pre>
 <blockquote>
 <p>⚠️ <strong>Important:</strong> The <code>Condition</code> column must contain exactly “Control” and “Treat” (case-sensitive) for DESeq2 analysis.</p>
+</blockquote>
+<blockquote>
+<p><strong>Batch effect:</strong> with <code>batch = TRUE</code> in <code><a href="reference/TE_DEA.html">TE_DEA()</a></code>, the <code>Batch</code> column is added to the DESeq2 design (<code>~ batch + condition</code>). Batch must not be fully confounded with Condition (each batch should contain both Control and Treat samples).</p>
 </blockquote>
 </div>
 <div class="section level3">

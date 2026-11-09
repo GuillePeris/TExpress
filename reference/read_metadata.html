@@ -46,7 +46,7 @@ and follow formatting requirements for DESeq2 compatibility.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_metadata</span><span class="op">(</span><span class="va">datafile</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_metadata</span><span class="op">(</span><span class="va">datafile</span>, batch <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -55,19 +55,28 @@ and follow formatting requirements for DESeq2 compatibility.</p>
 
 <dl><dt id="arg-datafile">datafile<a class="anchor" aria-label="anchor" href="#arg-datafile"></a></dt>
 <dd><p>Character string. Path to a tab-separated file (.txt, .tsv, or .csv)
-containing metadata. Must have exactly 4 columns with headers: File, Sample,
-Group, and Condition.</p></dd>
+containing metadata. Must have 4 columns with headers: File, Sample,
+Group, and Condition, plus an optional fifth column with header Batch.</p></dd>
+
+
+<dt id="arg-batch">batch<a class="anchor" aria-label="anchor" href="#arg-batch"></a></dt>
+<dd><p>Logical. If TRUE, the metadata file must contain a fifth column
+with header Batch, used to model batch effects in DESeq2, and every batch
+must contain samples of both conditions. If FALSE, a Batch column is
+accepted but not required. Default is FALSE.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with four columns (File, Sample, Group, Condition) and
-validated metadata. The Condition column is converted to a factor with
-"Control" as the reference level.</p>
+    <p>A data frame with four columns (File, Sample, Group, Condition), plus
+Batch if present, and validated metadata. The Condition column is converted
+to a factor with "Control" as the reference level.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The metadata file must follow these requirements:</p><ul><li><p>Exactly 4 columns with headers: File, Sample, Group, Condition</p></li>
+    <p>The metadata file must follow these requirements:</p><ul><li><p>4 columns with headers: File, Sample, Group, Condition, optionally
+followed by a fifth column with header Batch (required if
+<code>batch = TRUE</code>)</p></li>
 <li><p>At least one row of data (beyond the header)</p></li>
 <li><p>The "Condition" column must contain exactly two unique values: "Control" and "Treat"</p></li>
 <li><p>No duplicate values in the "Sample" or "File" columns</p></li>
@@ -88,6 +97,16 @@ proper DESeq2 analysis, where "Control" will be set as the reference level.</p>
 <span class="r-in"><span><span class="co"># WT2.cntTable    WT2     WT      Control</span></span></span>
 <span class="r-in"><span><span class="co"># KO1.cntTable    KO1     KO      Treat</span></span></span>
 <span class="r-in"><span><span class="co"># KO2.cntTable    KO2     KO      Treat</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Read metadata including a Batch column</span></span></span>
+<span class="r-in"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu">read_metadata</span><span class="op">(</span><span class="st">"path/to/metadata_batch.txt"</span>, batch <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example valid file structure with batch:</span></span></span>
+<span class="r-in"><span><span class="co"># File            Sample  Group   Condition  Batch</span></span></span>
+<span class="r-in"><span><span class="co"># WT1.cntTable    WT1     WT      Control    1</span></span></span>
+<span class="r-in"><span><span class="co"># WT2.cntTable    WT2     WT      Control    2</span></span></span>
+<span class="r-in"><span><span class="co"># KO1.cntTable    KO1     KO      Treat      1</span></span></span>
+<span class="r-in"><span><span class="co"># KO2.cntTable    KO2     KO      Treat      2</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
