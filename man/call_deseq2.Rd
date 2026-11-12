@@ -46,6 +46,9 @@ analyzing datasets containing both genes and transposable elements. This
 approach assumes that TEs may have more variable expression and could bias
 normalization.
 
+Counts are rounded to the nearest integer before building the DESeqDataSet,
+as DESeq2 requires integer counts.
+
 The function assumes TE features contain ":" in their rownames (e.g.,
 "transcript_id:TE_name:TE_family:TE_class").
 }

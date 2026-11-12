@@ -32,6 +32,9 @@
 #' approach assumes that TEs may have more variable expression and could bias
 #' normalization.
 #'
+#' Counts are rounded to the nearest integer before building the DESeqDataSet,
+#' as DESeq2 requires integer counts.
+#'
 #' The function assumes TE features contain ":" in their rownames (e.g.,
 #' "transcript_id:TE_name:TE_family:TE_class").
 #'
@@ -75,6 +78,9 @@ call_deseq2 <- function(countData, metadata, useCtrlGenes = FALSE, batch = FALSE
   if (!is.data.frame(metadata)) {
     stop("'metadata' must be a data frame.", call. = FALSE)
   }
+
+  # DESeq2 requires integer counts.
+  countData <- round(countData)
 
   if (!isTRUE(batch) && !isFALSE(batch)) {
     stop("'batch' must be TRUE or FALSE.", call. = FALSE)
