@@ -20,7 +20,8 @@ TE_DEA(
   shrinklog2FC = FALSE,
   saveNorm = TRUE,
   keep.standard.chroms = TRUE,
-  batch = FALSE
+  batch = FALSE,
+  minBM = 0
 )
 ```
 
@@ -98,6 +99,14 @@ TE_DEA(
   effects. The metadata file must then contain a Batch column (see
   [`read_metadata`](https://guilleperis.github.io/TExpress/reference/read_metadata.md)).
   Default is FALSE.
+
+- minBM:
+
+  Numeric. Only features with baseMean \> minBM are shown in the volcano
+  plots (see
+  [`graphTE_DEA`](https://guilleperis.github.io/TExpress/reference/graphTE_DEA.md)).
+  Saved results and MA plots are not filtered. Default is 0 (no
+  filtering).
 
 ## Value
 
