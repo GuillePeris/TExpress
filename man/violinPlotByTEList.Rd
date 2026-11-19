@@ -16,7 +16,8 @@ violinPlotByTEList(
   device = "png",
   output_folder = ".",
   output_file = NULL,
-  plot.title = "Violin plot"
+  plot.title = "Violin plot",
+  onlySignif = FALSE
 )
 }
 \arguments{
@@ -48,6 +49,11 @@ extension (added from \code{device}). If NULL, uses
 "violinPlot_<broad_type>" (default: NULL)}
 
 \item{plot.title}{Character string for plot title (default: "Violin plot")}
+
+\item{onlySignif}{Logical. If TRUE, violins are drawn only from features
+with padj <= maxpadj, "_signif" is appended to the file name and the
+threshold is added to the subtitle; if FALSE, from all features. Up- and
+down-regulated points are plotted in both cases (default: FALSE)}
 }
 \value{
 Invisibly returns NULL. Saves plot to file as side effect.

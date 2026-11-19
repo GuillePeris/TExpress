@@ -9,6 +9,10 @@
   greater than 0, volcano plots only show features with `baseMean > minBM`,
   the threshold is shown as the plot subtitle, and `_BM_<minBM>` is appended
   to the file name. MA plots and saved results are not filtered.
+* `violinPlotByTEList()` and `violinPlotByTEtype()` gain an `onlySignif`
+  argument (default `FALSE`). When `TRUE`, violins are drawn only from
+  features with `padj <= maxpadj`, the threshold is added to the subtitle and
+  `_signif` is appended to the file name. Up/down points are unchanged.
 
 # TExpress 1.0
 

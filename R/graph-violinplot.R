@@ -21,6 +21,10 @@
 #'   extension (added from \code{device}). If NULL, uses
 #'   "violinPlot_<broad_type>" (default: NULL)
 #' @param plot.title Character string for plot title (default: "Violin plot")
+#' @param onlySignif Logical. If TRUE, violins are drawn only from features
+#'   with padj <= maxpadj, "_signif" is appended to the file name and the
+#'   threshold is added to the subtitle; if FALSE, from all features. Up- and
+#'   down-regulated points are plotted in both cases (default: FALSE)
 #'
 #' @return Invisibly returns NULL. Saves plot to file as side effect.
 #'
@@ -45,7 +49,8 @@ violinPlotByTEList <- function(res.TEs,
                                device = "png",
                                output_folder = ".",
                                output_file = NULL,
-                               plot.title = "Violin plot") {
+                               plot.title = "Violin plot",
+                               onlySignif = FALSE) {
   
   # Input validation
   if (missing(res.TEs)) {
@@ -60,8 +65,17 @@ violinPlotByTEList <- function(res.TEs,
     stop("Argument 'TE_list' is missing with no default.", call. = FALSE)
   }
 
+  if (!isTRUE(onlySignif) && !isFALSE(onlySignif)) {
+    stop("'onlySignif' must be TRUE or FALSE.", call. = FALSE)
+  }
+
   # Find TE type
   broad_type <- .determine_broad_type(res.TEs, TE_list, broad_type)
+
+  # Draw violins only from significant features
+  if (onlySignif) {
+    res.TEs <- res.TEs[res.TEs$padj <= maxpadj, , drop = FALSE]
+  }
   
   # Filter and prepare data for TE type
   filtered_data <- .filter_by_te_list(res.TEs, TE_list, broad_type, min.N)
@@ -75,6 +89,10 @@ violinPlotByTEList <- function(res.TEs,
   }
   filename <- file.path(output_folder, output_file)
   subtitle <- paste0("Expression of specific ", broad_type)
+  if (onlySignif) {
+    filename <- paste0(filename, "_signif")
+    subtitle <- paste0(subtitle, " (padj <= ", maxpadj, " only)")
+  }
   
   .create_and_save_violin_plot(
     data = filtered_data,
@@ -119,6 +137,10 @@ violinPlotByTEList <- function(res.TEs,
 #'   extension (added from \code{device}). If NULL, uses
 #'   "violinPlot_<TE_type>_<specific_type>" (default: NULL)
 #' @param plot.title Character string for plot title (default: "Violin plot")
+#' @param onlySignif Logical. If TRUE, violins are drawn only from features
+#'   with padj <= maxpadj, "_signif" is appended to the file name and the
+#'   threshold is added to the subtitle; if FALSE, from all features. Up- and
+#'   down-regulated points are plotted in both cases (default: FALSE)
 #'
 #' @return Invisibly returns NULL. Saves plot to file as side effect.
 #'
@@ -146,7 +168,8 @@ violinPlotByTEtype <- function(res.TEs,
                        device = "png",
                        output_folder = ".",
                        output_file = NULL,
-                       plot.title = "Violin plot") {
+                       plot.title = "Violin plot",
+                       onlySignif = FALSE) {
   
   # Input validation
   if (missing(res.TEs)) {
@@ -161,9 +184,18 @@ violinPlotByTEtype <- function(res.TEs,
     stop("Argument 'TE_type' is missing with no default.", call. = FALSE)
   }
     
+  if (!isTRUE(onlySignif) && !isFALSE(onlySignif)) {
+    stop("'onlySignif' must be TRUE or FALSE.", call. = FALSE)
+  }
+
   # Find and validate TE type
   broad_type <- .determine_broad_type(res.TEs, TE_type, broad_type)
   .validate_te_types(broad_type, specific_type)
+
+  # Draw violins only from significant features
+  if (onlySignif) {
+    res.TEs <- res.TEs[res.TEs$padj <= maxpadj, , drop = FALSE]
+  }
   
   # Filter and prepare data for TE type
   filtered_data <- .filter_by_te_type(res.TEs, TE_type, broad_type, specific_type, min.N)
@@ -183,6 +215,10 @@ violinPlotByTEtype <- function(res.TEs,
   }
   filename <- file.path(output_folder, output_file)
   subtitle <- paste0("Most ", order, "-dysregulated ", specific_type, " in ", TE_type, " ", broad_type)
+  if (onlySignif) {
+    filename <- paste0(filename, "_signif")
+    subtitle <- paste0(subtitle, " (padj <= ", maxpadj, " only)")
+  }
   
   .create_and_save_violin_plot(
     data = subset.TEs,
