@@ -5,6 +5,10 @@
   included in the DESeq2 design (`~ batch + condition`). Metadata files may
   now contain an optional fifth `Batch` column. With `batch = TRUE`, every
   batch must contain samples of both conditions.
+* `TE_DEA()` and `graphTE_DEA()` gain a `minBM` argument (default `0`). When
+  greater than 0, volcano plots only show features with `baseMean > minBM`,
+  the threshold is shown as the plot subtitle, and `_BM_<minBM>` is appended
+  to the file name. MA plots and saved results are not filtered.
 
 # TExpress 1.0
 

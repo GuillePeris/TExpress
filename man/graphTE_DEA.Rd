@@ -12,7 +12,8 @@ graphTE_DEA(
   output_folder = ".",
   width = 7,
   height = 7,
-  plot.title = NULL
+  plot.title = NULL,
+  minBM = 0
 )
 }
 \arguments{
@@ -40,6 +41,11 @@ Must exist or be creatable. Default is current directory (".").}
 
 \item{plot.title}{Character string. Title for both plots. If NULL (default),
 uses generic titles "Volcano Plot" and "MA Plot".}
+
+\item{minBM}{Numeric. Only features with baseMean > minBM are shown in the
+volcano plot (the MA plot is not filtered). If greater than 0,
+"\emph{BM}\if{html}{\out{<minBM>}}" is appended to the volcano plot file name and the threshold
+is shown as its subtitle. Default is 0 (no filtering).}
 }
 \value{
 Does not return any object

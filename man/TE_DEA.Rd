@@ -17,7 +17,8 @@ TE_DEA(
   shrinklog2FC = FALSE,
   saveNorm = TRUE,
   keep.standard.chroms = TRUE,
-  batch = FALSE
+  batch = FALSE,
+  minBM = 0
 )
 }
 \arguments{
@@ -65,6 +66,10 @@ from TE annotation. Default is TRUE.}
 included in the DESeq2 design (\code{~ batch + condition}) to correct for
 batch effects. The metadata file must then contain a Batch column (see
 \code{\link{read_metadata}}). Default is FALSE.}
+
+\item{minBM}{Numeric. Only features with baseMean > minBM are shown in the
+volcano plots (see \code{\link{graphTE_DEA}}). Saved results and MA plots
+are not filtered. Default is 0 (no filtering).}
 }
 \value{
 A list with four elements:

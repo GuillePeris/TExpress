@@ -20,6 +20,10 @@
 #' @param height Numeric. Plot height in inches. Default is 7.
 #' @param plot.title Character string. Title for both plots. If NULL (default),
 #'   uses generic titles "Volcano Plot" and "MA Plot".
+#' @param minBM Numeric. Only features with baseMean > minBM are shown in the
+#'   volcano plot (the MA plot is not filtered). If greater than 0,
+#'   "_BM_<minBM>" is appended to the volcano plot file name and the threshold
+#'   is shown as its subtitle. Default is 0 (no filtering).
 #'
 #' @return Does not return any object
 #'
@@ -69,7 +73,8 @@ graphTE_DEA <- function(res,
                         output_folder = ".",
                         width = 7,
                         height = 7,
-                        plot.title = NULL) {
+                        plot.title = NULL,
+                        minBM = 0) {
   
   # Input validation 
   if (missing(res)) {
@@ -83,7 +88,19 @@ graphTE_DEA <- function(res,
       stop("'res' must be a data frame or DESeqResults object.", call. = FALSE)
     }
   }
-  
+
+  if (!is.numeric(minBM) || length(minBM) != 1 || is.na(minBM) || minBM < 0) {
+    stop("'minBM' must be a single non-negative number.", call. = FALSE)
+  }
+
+  # Keep only features with baseMean over minBM for the volcano plot
+  res.volcano <- res
+  if (minBM > 0) {
+    res.volcano <- res[res$baseMean > minBM, , drop = FALSE]
+  }
+  bm.suffix <- if (minBM > 0) paste0("_BM_", minBM) else ""
+  bm.subtitle <- if (minBM > 0) paste0("baseMean > ", minBM) else NULL
+
   # Create output folder if it doesn't exist
   if (!dir.exists(output_folder)) {
     tryCatch(
@@ -106,7 +123,8 @@ graphTE_DEA <- function(res,
   
   # Create volcano plot
   p.volcano <- tryCatch(
-    volcanoPlot(res, maxpadj, minlfc, volcano_title),
+    volcanoPlot(res.volcano, maxpadj, minlfc, volcano_title) +
+      ggplot2::labs(subtitle = bm.subtitle),
     error = function(e) {
       stop(
         "Failed to create volcano plot: ", e$message,
@@ -127,7 +145,7 @@ graphTE_DEA <- function(res,
   )
   
   # Save volcano plot
-  filename.volcano <- file.path(output_folder, "volcanoPlot")
+  filename.volcano <- file.path(output_folder, paste0("volcanoPlot", bm.suffix))
   
   tryCatch(
     {

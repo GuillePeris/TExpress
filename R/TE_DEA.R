@@ -36,6 +36,9 @@
 #'   included in the DESeq2 design (\code{~ batch + condition}) to correct for
 #'   batch effects. The metadata file must then contain a Batch column (see
 #'   \code{\link{read_metadata}}). Default is FALSE.
+#' @param minBM Numeric. Only features with baseMean > minBM are shown in the
+#'   volcano plots (see \code{\link{graphTE_DEA}}). Saved results and MA plots
+#'   are not filtered. Default is 0 (no filtering).
 #'
 #' @details
 #' The pipeline performs the following steps:
@@ -136,7 +139,8 @@ TE_DEA <- function(metafile,
                    shrinklog2FC = FALSE,
                    saveNorm = TRUE, 
                    keep.standard.chroms=TRUE,
-                   batch = FALSE) {
+                   batch = FALSE,
+                   minBM = 0) {
   message("============================================") 
   message("  TE loci differential expression analysis  ")
   message("============================================") 
@@ -432,6 +436,7 @@ TE_DEA <- function(metafile,
       graphTE_DEA(
         res.genes, maxpadj, minlfc, device,
         output.genes,
+        minBM = minBM,
         plot.title = if (nchar(plot.title) > 0) {
           paste0(plot.title, " - Genes")
         } else {
@@ -450,6 +455,7 @@ TE_DEA <- function(metafile,
       graphTE_DEA(
         res.TEs, maxpadj, minlfc, device,
         output.TEs,
+        minBM = minBM,
         plot.title = if (nchar(plot.title) > 0) {
           paste0(plot.title, " - TEs")
         } else {
