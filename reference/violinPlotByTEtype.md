@@ -22,7 +22,8 @@ violinPlotByTEtype(
   device = "png",
   output_folder = ".",
   output_file = NULL,
-  plot.title = "Violin plot"
+  plot.title = "Violin plot",
+  onlySignif = FALSE
 )
 ```
 
@@ -97,6 +98,13 @@ violinPlotByTEtype(
 - plot.title:
 
   Character string for plot title (default: "Violin plot")
+
+- onlySignif:
+
+  Logical. If TRUE, violins are drawn only from features with padj \<=
+  maxpadj, "\_signif" is appended to the file name and the threshold is
+  added to the subtitle; if FALSE, from all features. Up- and
+  down-regulated points are plotted in both cases (default: FALSE)
 
 ## Value
 

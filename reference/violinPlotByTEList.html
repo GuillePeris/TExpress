@@ -55,7 +55,8 @@ transposable elements (TEs).</p>
 <span>  device <span class="op">=</span> <span class="st">"png"</span>,</span>
 <span>  output_folder <span class="op">=</span> <span class="st">"."</span>,</span>
 <span>  output_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  plot.title <span class="op">=</span> <span class="st">"Violin plot"</span></span>
+<span>  plot.title <span class="op">=</span> <span class="st">"Violin plot"</span>,</span>
+<span>  onlySignif <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -114,6 +115,13 @@ extension (added from <code>device</code>). If NULL, uses
 
 <dt id="arg-plot-title">plot.title<a class="anchor" aria-label="anchor" href="#arg-plot-title"></a></dt>
 <dd><p>Character string for plot title (default: "Violin plot")</p></dd>
+
+
+<dt id="arg-onlysignif">onlySignif<a class="anchor" aria-label="anchor" href="#arg-onlysignif"></a></dt>
+<dd><p>Logical. If TRUE, violins are drawn only from features
+with padj &lt;= maxpadj, "_signif" is appended to the file name and the
+threshold is added to the subtitle; if FALSE, from all features. Up- and
+down-regulated points are plotted in both cases (default: FALSE)</p></dd>
 
 </dl></div>
     <div class="section level2">

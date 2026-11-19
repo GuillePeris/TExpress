@@ -39,6 +39,8 @@
 <code><a href="../reference/TE_DEA.html">TE_DEA()</a></code>, <code><a href="../reference/call_deseq2.html">call_deseq2()</a></code> and <code><a href="../reference/read_metadata.html">read_metadata()</a></code> gain a <code>batch</code> argument (default <code>FALSE</code>). When <code>TRUE</code>, the <code>Batch</code> column of the metadata is included in the DESeq2 design (<code>~ batch + condition</code>). Metadata files may now contain an optional fifth <code>Batch</code> column. With <code>batch = TRUE</code>, every batch must contain samples of both conditions.</li>
 <li>
 <code><a href="../reference/TE_DEA.html">TE_DEA()</a></code> and <code><a href="../reference/graphTE_DEA.html">graphTE_DEA()</a></code> gain a <code>minBM</code> argument (default <code>0</code>). When greater than 0, volcano plots only show features with <code>baseMean &gt; minBM</code>, the threshold is shown as the plot subtitle, and <code>_BM_&lt;minBM&gt;</code> is appended to the file name. MA plots and saved results are not filtered.</li>
+<li>
+<code><a href="../reference/violinPlotByTEList.html">violinPlotByTEList()</a></code> and <code><a href="../reference/violinPlotByTEtype.html">violinPlotByTEtype()</a></code> gain an <code>onlySignif</code> argument (default <code>FALSE</code>). When <code>TRUE</code>, violins are drawn only from features with <code>padj &lt;= maxpadj</code>, the threshold is added to the subtitle and <code>_signif</code> is appended to the file name. Up/down points are unchanged.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0" id="texpress-10">TExpress 1.0<a class="anchor" aria-label="anchor" href="#texpress-10"></a></h2>
