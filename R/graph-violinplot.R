@@ -374,14 +374,11 @@ violinPlotByTEtype <- function(res.TEs,
 #' @noRd
 .create_and_save_violin_plot <- function(data, x, filename, plot.title,
                                          subtitle, width, height, device) {
-  ylim <- c(min(data$log2FoldChange) - 0.25, max(data$log2FoldChange) + 0.25)
-
   p <- ggpubr::ggviolin(data, x = x, y = "log2FoldChange", alpha = 0.5,
                         fill = "#4d6600", color = "#333300",
                         quantiles = 0.5,
                         quantile.linetype = "solid",                        
-                        short.panel.labs = FALSE, width = 0.6, ylim = ylim,
-                        trim = TRUE,
+                        short.panel.labs = FALSE, width = 0.6,
                         outlier.shape = NA)
 
   p <- p +
