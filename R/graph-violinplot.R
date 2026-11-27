@@ -80,6 +80,13 @@ violinPlotByTEList <- function(res.TEs,
   # Filter and prepare data for TE type
   filtered_data <- .filter_by_te_list(res.TEs, TE_list, broad_type, min.N)
 
+  if (nrow(filtered_data) == 0) {
+    warning("No element of 'TE_list' has at least ", min.N,
+            if (onlySignif) " significant", " loci; violin plot not created.",
+            call. = FALSE)
+    return(invisible(NULL))
+  }
+
   # Add expression labels
   filtered_data <- .label_expression(filtered_data, minlfc, maxpadj)
   
@@ -199,6 +206,13 @@ violinPlotByTEtype <- function(res.TEs,
   
   # Filter and prepare data for TE type
   filtered_data <- .filter_by_te_type(res.TEs, TE_type, broad_type, specific_type, min.N)
+
+  if (nrow(filtered_data) == 0) {
+    warning("No ", specific_type, " in ", TE_type, " has at least ", min.N,
+            if (onlySignif) " significant", " loci; violin plot not created.",
+            call. = FALSE)
+    return(invisible(NULL))
+  }
   
   # Add expression labels
   filtered_data <- .label_expression(filtered_data, minlfc, maxpadj)
@@ -367,6 +381,7 @@ violinPlotByTEtype <- function(res.TEs,
                         quantiles = 0.5,
                         quantile.linetype = "solid",                        
                         short.panel.labs = FALSE, width = 0.6, ylim = ylim,
+                        trim = TRUE,
                         outlier.shape = NA)
 
   p <- p +
@@ -387,7 +402,9 @@ violinPlotByTEtype <- function(res.TEs,
 
   p <- p +
     ggplot2::geom_hline(yintercept = 0, linetype = 2, linewidth = 0.2) +
-    ggplot2::scale_y_continuous(breaks = c(-6, -4, -2, 0, 2, 4, 6)) +
+    ggplot2::scale_y_continuous(
+      breaks = function(lim) seq(2 * floor(lim[1] / 2), 2 * ceiling(lim[2] / 2), by = 2)
+    ) +
     ggplot2::labs(y = "log2(FC)") +
     ggplot2::ggtitle(plot.title, subtitle = subtitle) +
     .theme_texpress(base_size = 13) +
